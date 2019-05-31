@@ -48,7 +48,7 @@ class Scratch3PiSenseHatBlocks {
                 var data = fs.readFileSync (fname, 'utf8');
                 if (data.indexOf ('RPi-Sense FB') != -1)
                 {
-                    fbfile = "/dev/fb" + fbtest.toString ();
+                    this.fbfile = "/dev/fb" + fbtest.toString ();
                     //nodeimu  = require('nodeimu');
                     //this.IMU = new nodeimu.IMU();
                     break;
@@ -59,7 +59,7 @@ class Scratch3PiSenseHatBlocks {
                 // fall back to the emulator if possible
                 if (fs.existsSync ("/dev/shm/rpi-sense-emu-screen"))
                 {
-                    fbfile = "/dev/shm/rpi-sense-emu-screen";
+                    this.fbfile = "/dev/shm/rpi-sense-emu-screen";
                     break;
                 }
                 else break;
