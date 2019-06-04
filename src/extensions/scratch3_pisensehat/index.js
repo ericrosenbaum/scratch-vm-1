@@ -207,6 +207,36 @@ class Scratch3PiSenseHatBlocks {
                         },
                     }
                 },
+                {
+                    opcode: 'scroll_message',
+                    text: formatMessage({
+                        id: 'pisensehat.scroll_message',
+                        default: 'scroll message [MESSAGE] at rotation [ROT] in [COLOUR] background [BCOLOUR]',
+                        description: 'scroll the message across at the desired rotation in the colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+			MESSAGE: {
+			    type: ArgumentType.STRING,
+			    defaultValue: 'Hello!'
+			},
+			ROT: {
+			    type: ArgumentType.STRING,
+			    menu: 'rots',
+			    defaultValue: '0'
+			},
+                        COLOUR: {
+                            type: ArgumentType.STRING,
+                            menu: 'colours',
+                            defaultValue: 'white'
+                        },
+                        BCOLOUR: {
+                            type: ArgumentType.STRING,
+                            menu: 'colours',
+                            defaultValue: 'off'
+                        },
+                    }
+                },
 		{
                     opcode: 'get_temp',
                     text: formatMessage({
@@ -516,5 +546,163 @@ class Scratch3PiSenseHatBlocks {
         fs.closeSync (fd);
     };
 
+    scroll_message (args)
+    {
+        const txt = Cast.toString(args.MESSAGE);
+        const orient = Cast.toNumber(args.ROT);
+        const colour = Cast.toString(args.COLOUR);
+        const bg = Cast.toString(args.BCOLOUR);
+
+        var pix = new Uint8Array (128);
+        var char_ind = 0;
+        var lett_ind = 0;
+        var msg = String (txt);
+        valf = this._map_colour (colour);
+        valb = this._map_colour (bg);
+        pix0 = valf / 256;
+        pix1 = valf % 256;
+        bg0 = valb / 256;
+        bg1 = valb % 256;
+
+        // clear the grid to off and output
+        for (pel = 0; pel < 64; pel++)
+        {
+            pix[pel*2] = bg0;
+            pix[pel*2 + 1] = bg1;
+        }
+        fd = fs.openSync (this.fbfile, "r+");
+        fs.writeSync (fd, pix, 0, 128, 0);
+        fs.closeSync (fd);
+
+        for (lett_ind = 0; lett_ind < msg.length + 2; lett_ind++)
+        {
+            lgrid = this._load_letter (msg[lett_ind]);
+            for (char_ind = 0; char_ind < 6; char_ind++)
+            {
+                // scroll the grid
+                for (col = 0; col < 7; col++)
+                {
+                    for (row = 0; row < 8; row++)
+                    {
+                        if (orient == 0)
+                        {
+                            // from right to left
+                            pix[(row * 16) + (col * 2)] = pix[(row * 16) + (col + 1) * 2];
+                            pix[(row * 16) + (col * 2) + 1] = pix[(row * 16) + (col + 1) * 2 + 1];
+                        }
+                        else if (orient == 90)
+                        {
+                            // from the bottom up
+                            pix[(col * 16) + (row * 2)] = pix[((col + 1) * 16) + (row * 2)];
+                            pix[(col * 16) + (row * 2) + 1] = pix[((col + 1) * 16) + (row * 2) + 1];
+                        }
+                        else if (orient == 180)
+                        {
+                            // from left to right inverted
+                            pix[(row * 16) + ((7 - col) * 2)] = pix[(row * 16) + (6 - col) * 2];
+                            pix[(row * 16) + ((7 - col) * 2) + 1] = pix[(row * 16) + (6 - col) * 2 + 1];
+                        }
+                        else if (orient == 270)
+                        {
+                            // from the top down
+                            pix[((7 - col) * 16) + (row * 2)] = pix[((6 - col) * 16) + (row * 2)];
+                            pix[((7 - col) * 16) + (row * 2) + 1] = pix[((6 - col) * 16) + (row * 2) + 1];
+                        }
+                    }
+                }
+
+                // add the new line of pixels
+                for (row = 0; row < 8; row++)
+                {
+                    if (orient == 0)
+                    {
+                        if (char_ind > 5)
+                        {
+                            pix[(row * 16) + 14] = bg0;
+                            pix[(row * 16) + 15] = bg1;
+                        }
+                        else if (lgrid[char_ind * 16 + (14 - row * 2)] == 0xFF)
+                        {
+                            pix[(row * 16) + 14] = pix0;
+                            pix[(row * 16) + 15] = pix1;
+                        }
+                        else
+                        {
+                            pix[(row * 16) + 14] = bg0;
+                            pix[(row * 16) + 15] = bg1;
+                        }
+                    }
+                    else if (orient == 90)
+                    {
+                        if (char_ind > 5)
+                        {
+                            pix[112 + (14 - row * 2)] = bg0;
+                            pix[113 + (14 - row * 2)] = bg1;
+                        }
+                        else if (lgrid[char_ind * 16 + (14 - row * 2)] == 0xFF)
+                        {
+                            pix[112 + (14 - row * 2)] = pix0;
+                            pix[113 + (14 - row * 2)] = pix1;
+                        }
+                        else
+                        {
+                            pix[112 + (14 - row * 2)] = bg0;
+                            pix[113 + (14 - row * 2)] = bg1;
+                        }
+                    }
+                    else if (orient == 180)
+                    {
+                        if (char_ind > 5)
+                        {
+                            pix[((7 - row) * 16)] = bg0;
+                            pix[((7 - row) * 16) + 1] = bg1;
+                        }
+                        else if (lgrid[char_ind * 16 + (14 - row * 2)] == 0xFF)
+                        {
+                            pix[((7 - row) * 16)] = pix0;
+                            pix[((7 - row) * 16) + 1] = pix1;
+                        }
+                        else
+                        {
+                            pix[((7 - row) * 16)] = bg0;
+                            pix[((7 - row) * 16) + 1] = bg1;
+                        }
+                    }
+                    else if (orient == 270)
+                    {
+                        if (char_ind > 5)
+                        {
+                            pix[row * 2] = bg0;
+                            pix[row * 2 + 1] = bg1;
+                        }
+                        else if (lgrid[char_ind * 16 + (14 - row * 2)] == 0xFF)
+                        {
+                            pix[row * 2] = pix0;
+                            pix[row * 2 + 1] = pix1;
+                        }
+                        else
+                        {
+                            pix[row * 2] = bg0;
+                            pix[row * 2 + 1] = bg1;
+                        }
+                    }
+                }
+
+                // output the buffer
+                fd = fs.openSync (this.fbfile, "r+");
+                fs.writeSync (fd, pix, 0, 128, 0);
+                fs.closeSync (fd);
+
+                // pause for a bit
+                var start = new Date().getTime();
+                for (var i = 0; i < 1e7; i++)
+                {
+                    if ((new Date().getTime() - start) > 100) break;
+                }
+            }
+        }
+    }
+
 }
+
 module.exports = Scratch3PiSenseHatBlocks;
