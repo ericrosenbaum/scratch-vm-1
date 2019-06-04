@@ -99,18 +99,11 @@ class Scratch3PiGPIOBlocks {
         const pin = Cast.toNumber(args.GPIO);
         const val = Cast.toString(args.OUTPUT);
 
-	//console.log ("set_gpio")
-	//console.log (pin)
-	//console.log (val)
-
         if (pin === '' || pin < 0 || pin > 27) return;
         var dir = 0, lev;
         if (val == 'output high') lev = 1;
         else if (val == 'output low') lev = 0;
         else dir = 1;
-
-	//console.log (dir)
-	//console.log (lev)
 
 	// check the pin is exported
 	if (!fs.existsSync("/sys/class/gpio/gpio" + pin)) 
@@ -131,14 +124,11 @@ class Scratch3PiGPIOBlocks {
 	// set the output value
         if (dir == 0)
             fs.writeFileSync("/sys/class/gpio/gpio" + pin + "/value", lev == 1 ? "1" : "0", "utf8");
-    };
+    }
 
     get_gpio (args) 
     {
         const pin = Cast.toNumber(args.GPIO);
-
-	//console.log ("get_gpio")
-	//console.log (pin)
 
         if (pin === '' || pin < 0 || pin > 27) return;
 
@@ -151,7 +141,8 @@ class Scratch3PiGPIOBlocks {
 	console.log (data)
 	if (data.slice(0,1) == "1") return true;
 	else return false;
-    };
+    }
 
 }
+
 module.exports = Scratch3PiGPIOBlocks;

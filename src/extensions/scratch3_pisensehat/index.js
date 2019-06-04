@@ -510,7 +510,7 @@ class Scratch3PiSenseHatBlocks {
         const dict = " +-*/!\"#$><0123456789.=)(ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz?,;:|@%[&_']\\~"
         inv = 90 - dict.indexOf (lett);
         if (inv > 90) inv = 90;
-        fd = fs.openSync ('/home/pi/sense_hat_text.bmp', 'r');
+        fd = fs.openSync ('/usr/lib/scratch3/sense_hat_text.bmp', 'r');
         for (count = 0; count < 5; count++)
             fs.readSync (fd, lgr, count * 16, 16, 3098 + inv * 80 + (64 - count * 16));
         fs.closeSync (fd);
