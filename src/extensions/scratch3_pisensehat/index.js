@@ -67,53 +67,6 @@ class Scratch3PiSenseHatBlocks {
             }
             fbtest++;
         }
-	    console.log ("framebuffer");
-	    console.log (this.fbfile);
-	
-	
-	
-	
-	
-	
-
-        // find the framebuffer on the SenseHAT
-/*
-	    this.fbfile = "/dev/shm/rpi-sense-emu-screen";
-            if (fs.existsSync ("/sys/class/graphics/fb0/name"))
-            {
-                var data = fs.readFileSync ("/sys/class/graphics/fb0/name", 'utf8');
-                if (data.indexOf ('RPi-Sense FB') != -1)
-                {
-                    this.fbfile = "/dev/fb0";
-                    nodeimu  = require('nodeimu');
-                    IMU = new nodeimu.IMU();
-                }
-            }
-            if (fs.existsSync ("/sys/class/graphics/fb1/name"))
-            {
-                var data = fs.readFileSync ("/sys/class/graphics/fb1/name", 'utf8');
-                if (data.indexOf ('RPi-Sense FB') != -1)
-                {
-                    this.fbfile = "/dev/fb1";
-                    nodeimu  = require('nodeimu');
-                    IMU = new nodeimu.IMU();
-                }
-            }
-            if (fs.existsSync ("/sys/class/graphics/fb2/name"))
-            {
-                var data = fs.readFileSync ("/sys/class/graphics/fb2/name", 'utf8');
-                if (data.indexOf ('RPi-Sense FB') != -1)
-                {
-                    this.fbfile = "/dev/fb1";
-                    nodeimu  = require('nodeimu');
-                    IMU = new nodeimu.IMU();
-                }
-            }
-	    console.log ("framebuffer");
-	    console.log (this.fbfile);
-*/
-
-
     }
 
 
@@ -161,7 +114,51 @@ class Scratch3PiSenseHatBlocks {
                     }),
                     blockType: BlockType.REPORTER
                 },
-
+		{
+                    opcode: 'get_press',
+                    text: formatMessage({
+                        id: 'pisensehat.get_press',
+                        default: 'pressure',
+                        description: 'gets pressure'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+		{
+                    opcode: 'get_humid',
+                    text: formatMessage({
+                        id: 'pisensehat.get_humid',
+                        default: 'humidity',
+                        description: 'gets humidity'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+		{
+                    opcode: 'get_ox',
+                    text: formatMessage({
+                        id: 'pisensehat.get_ox',
+                        default: 'roll',
+                        description: 'gets roll'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+		{
+                    opcode: 'get_oy',
+                    text: formatMessage({
+                        id: 'pisensehat.get_oy',
+                        default: 'pitch',
+                        description: 'gets pitch'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+		{
+                    opcode: 'get_oz',
+                    text: formatMessage({
+                        id: 'pisensehat.get_oz',
+                        default: 'yaw',
+                        description: 'gets yaw'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
             ],
             menus: {
 		colours: ['off', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white'],
@@ -170,20 +167,6 @@ class Scratch3PiSenseHatBlocks {
         };
     }
 
-    _map_colour (col)
-    {
-        if (col == 'off') return 0;
-        else if (col == 'white') return 0x1CE7;
-        else if (col == 'red') return 0x00E0;
-        else if (col == 'green') return 0x0007;
-        else if (col == 'blue') return 0x1C00;
-        else if (col == 'magenta') return 0x1CE0;
-        else if (col == 'yellow') return 0x00E7;
-        else if (col == 'cyan') return 0x1C07;
-        return 0;
-    }
-    
-    
     get_temp ()
     {
         if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
@@ -199,25 +182,103 @@ class Scratch3PiSenseHatBlocks {
         return Number (data.temperature).toFixed (2);
     };
 
-    
+    get_press ()
+    {
+        if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
+        {
+            var data = new Uint8Array (20);
+            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-pressure", "r");
+            fs.readSync (fd, data, 0, 20, 0);
+            fs.closeSync (fd);
+            var view = new DataView (data.buffer, 0, 20);
+            return Number (view.getInt32 (12, true) / 4096).toFixed (2);
+        }
+        var data = this.IMU.getValueSync();
+        return Number (data.pressure).toFixed (2);
+    };
+
+    get_humid ()
+    {
+        if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
+        {
+            var data = new Uint8Array (28);
+            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-humidity", "r");
+            fs.readSync (fd, data, 0, 28, 0);
+            fs.closeSync (fd);
+            var view = new DataView (data.buffer, 0, 28);
+            return Number (view.getInt16 (22, true) / 256).toFixed (2);
+        }
+        var data = this.IMU.getValueSync();
+        return Number (data.humidity).toFixed (2);
+    };
+
+    get_ox ()
+    {
+        if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
+        {
+            var data = new Uint8Array (56);
+            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
+            fs.readSync (fd, data, 0, 56, 0);
+            fs.closeSync (fd);
+            var view = new DataView (data.buffer, 0, 56);
+            return Number (view.getInt16 (50, true) * 360 / 32768).toFixed (2);
+        }
+        var data = this.IMU.getValueSync();
+        return Number (data.fusionPose.x * 180 / Math.PI).toFixed (2);
+    };
+
+    get_oy ()
+    {
+        if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
+        {
+            var data = new Uint8Array (56);
+            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
+            fs.readSync (fd, data, 0, 56, 0);
+            fs.closeSync (fd);
+            var view = new DataView (data.buffer, 0, 56);
+            return Number (view.getInt16 (52, true) * 360 / 32768).toFixed (2);
+        }
+        var data = this.IMU.getValueSync();
+        return Number (data.fusionPose.y * 180 / Math.PI).toFixed (2);
+    };
+
+    get_oz ()
+    {
+        if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
+        {
+            var data = new Uint8Array (56);
+            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
+            fs.readSync (fd, data, 0, 56, 0);
+            fs.closeSync (fd);
+            var view = new DataView (data.buffer, 0, 56);
+            return Number (view.getInt16 (54, true) * 360 / 32768).toFixed (2);
+        }
+        var data = this.IMU.getValueSync();
+        return Number (data.fusionPose.z * 180 / Math.PI).toFixed (2);
+    };
+
+    _map_colour (col)
+    {
+        if (col == 'off') return 0;
+        else if (col == 'white') return 0x1CE7;
+        else if (col == 'red') return 0x00E0;
+        else if (col == 'green') return 0x0007;
+        else if (col == 'blue') return 0x1C00;
+        else if (col == 'magenta') return 0x1CE0;
+        else if (col == 'yellow') return 0x00E7;
+        else if (col == 'cyan') return 0x1C07;
+        return 0;
+    }
 
     set_pixel_col (args)
     {
         const x = Cast.toNumber(args.X);
         const y = Cast.toNumber(args.Y);
         const col = Cast.toString(args.COLOUR);
-	
-	console.log ("set_pixel_col");
-	console.log (x);
-	console.log (y);
-	console.log (col);
-	
+
         var pix = new Uint8Array (2);
         var val = this._map_colour (col);
-	
-	console.log (val);
-	console.log (pix);
-	
+
         pix[0] = val / 256;
         pix[1] = val % 256;
         fd = fs.openSync (this.fbfile, "r+");
