@@ -80,11 +80,44 @@ class Scratch3PiSenseHatBlocks {
             blockIconURI: blockIconURI,
             blocks: [
                 {
+                    opcode: 'set_pixel',
+                    text: formatMessage({
+                        id: 'pisensehat.set_pixel',
+                        default: 'set pixel [X],[Y] to R [R] G [G] B [B]',
+                        description: 'set pixel to RGB colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        X: {
+                            type: ArgumentType.STRING,
+                            menu: 'coords',
+                            defaultValue: '0'
+                        },
+                        Y: {
+                            type: ArgumentType.STRING,
+                            menu: 'coords',
+                            defaultValue: '0'
+                        },
+                        R: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 255
+                        },
+                        G: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 255
+                        },
+                        B: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 255
+                        },
+                    }
+                },
+                {
                     opcode: 'set_pixel_col',
                     text: formatMessage({
                         id: 'pisensehat.set_pixel_col',
                         default: 'set pixel [X],[Y] to [COLOUR]',
-                        description: 'set pixel to colour'
+                        description: 'set pixel to named colour'
                     }),
                     blockType: BlockType.COMMAND,
                     arguments: {
@@ -102,6 +135,75 @@ class Scratch3PiSenseHatBlocks {
                             type: ArgumentType.STRING,
                             menu: 'colours',
                             defaultValue: 'white'
+                        },
+                    }
+                },
+                {
+                    opcode: 'set_all_pixels',
+                    text: formatMessage({
+                        id: 'pisensehat.set_all_pixels',
+                        default: 'set all pixels to R [R] G [G] B [B]',
+                        description: 'set all pixels to RGB colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        R: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 255
+                        },
+                        G: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 255
+                        },
+                        B: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 255
+                        },
+                    }
+                },
+                {
+                    opcode: 'set_all_pixels_col',
+                    text: formatMessage({
+                        id: 'pisensehat.set_all_pixels_col',
+                        default: 'set all pixels to [COLOUR]',
+                        description: 'set all pixels to named colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        COLOUR: {
+                            type: ArgumentType.STRING,
+                            menu: 'colours',
+                            defaultValue: 'white'
+                        },
+                    }
+                },
+                {
+                    opcode: 'show_letter',
+                    text: formatMessage({
+                        id: 'pisensehat.show_letter',
+                        default: 'show letter [LETTER] at rotation [ROT] in [COLOUR] background [BCOLOUR]',
+                        description: 'show the letter at the desired rotation in the colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+			LETTER: {
+			    type: ArgumentType.STRING,
+			    defaultValue: 'A'
+			},
+			ROT: {
+			    type: ArgumentType.STRING,
+			    menu: 'rots',
+			    defaultValue: '0'
+			},
+                        COLOUR: {
+                            type: ArgumentType.STRING,
+                            menu: 'colours',
+                            defaultValue: 'white'
+                        },
+                        BCOLOUR: {
+                            type: ArgumentType.STRING,
+                            menu: 'colours',
+                            defaultValue: 'off'
                         },
                     }
                 },
@@ -162,7 +264,8 @@ class Scratch3PiSenseHatBlocks {
             ],
             menus: {
 		colours: ['off', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white'],
-                coords: ['0','1','2','3','4','5','6','7'],
+		coords: ['0','1','2','3','4','5','6','7'],
+		rots: ['0', '90', '180', '270'],
             }
         };
     }
@@ -270,6 +373,24 @@ class Scratch3PiSenseHatBlocks {
         return 0;
     }
 
+    set_pixel (args)
+    {
+        const x = Cast.toNumber(args.X);
+        const y = Cast.toNumber(args.Y);
+        const r = Cast.toNumber(args.R);
+        const g = Cast.toNumber(args.G);
+        const b = Cast.toNumber(args.B);
+
+        var pix = new Uint8Array (2);
+        var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
+
+        pix[0] = val / 256;
+        pix[1] = val % 256;
+        fd = fs.openSync (this.fbfile, "r+");
+        fs.writeSync (fd, pix, 0, 2, y * 16 + x * 2);
+        fs.closeSync (fd);
+    }
+
     set_pixel_col (args)
     {
         const x = Cast.toNumber(args.X);
@@ -285,6 +406,115 @@ class Scratch3PiSenseHatBlocks {
         fs.writeSync (fd, pix, 0, 2, y * 16 + x * 2);
         fs.closeSync (fd);
     }
+
+    set_all_pixels (args)
+    {
+        const r = Cast.toNumber(args.R);
+        const g = Cast.toNumber(args.G);
+        const b = Cast.toNumber(args.B);
+
+        var pix = new Uint8Array (128);
+        var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
+        var count = 0;
+        while (count < 64)
+        {
+            pix[count * 2] = val / 256;
+            pix[count * 2 + 1] = val % 256;
+            count++;
+        }
+        fd = fs.openSync (this.fbfile, "r+");
+        fs.writeSync (fd, pix, 0, 128, 0);
+        fs.closeSync (fd);
+    }
+
+    set_all_pixels_col (args)
+    {
+        const col = Cast.toString(args.COLOUR);
+
+        var pix = new Uint8Array (128);
+        var val = this._map_colour (col);
+        var count = 0;
+        while (count < 64)
+        {
+            pix[count * 2] = val / 256;
+            pix[count * 2 + 1] = val % 256;
+            count++;
+        }
+        fd = fs.openSync (this.fbfile, "r+");
+        fs.writeSync (fd, pix, 0, 128, 0);
+        fs.closeSync (fd);
+    }
+
+    _map_orient (pos, orient)
+    {
+        if (orient == 0)
+        {
+            x = pos % 8;
+            y = (pos - x) / 8;
+            if (x > 4) return 40;
+            else return ((x * 1) + 1) * 8 - 1 - (y * 1);
+        }
+        else if (orient == 90)
+        {
+            if (pos < 40) return pos;
+            else return 40;
+        }
+        else if (orient == 180)
+        {
+            x = pos % 8;
+            y = (pos - x) / 8;
+            if (x < 3) return 40;
+            else return (7 - (x * 1)) * 8 + (y * 1);
+        }
+        else if (orient == 270)
+        {
+            if (pos > 24) return 63 - pos;
+            else return 40;
+        }
+        return 40;
+    }
+
+    _load_letter (lett)
+    {
+        var lgr = new Uint8Array (80);
+        const dict = " +-*/!\"#$><0123456789.=)(ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz?,;:|@%[&_']\\~"
+        inv = 90 - dict.indexOf (lett);
+        if (inv > 90) inv = 90;
+        fd = fs.openSync ('/home/pi/sense_hat_text.bmp', 'r');
+        for (count = 0; count < 5; count++)
+            fs.readSync (fd, lgr, count * 16, 16, 3098 + inv * 80 + (64 - count * 16));
+        fs.closeSync (fd);
+        return lgr;
+    }
+
+    show_letter (args)
+    {
+        const lett = Cast.toString(args.LETTER);
+        const orient = Cast.toNumber(args.ROT);
+        const colour = Cast.toString(args.COLOUR);
+        const bg = Cast.toString(args.BCOLOUR);
+
+        //if (typeof (lett) != 'string') return;
+        if (lett.length != 1) return;
+        var pix = new Uint8Array (128);
+        var count = 0;
+        valf = this._map_colour (colour);
+        valb = this._map_colour (bg);
+        lgr = this._load_letter (lett);
+        while (count < 64)
+        {
+            map = this._map_orient (count, orient);
+            if (map == 40) val = valb;
+            else if (lgr[map * 2] == 0xFF) val = valf;
+            else val = valb;
+            pix[count * 2] = val / 256;
+            pix[count * 2 + 1] = val % 256;
+            count++;
+        }
+        fd = fs.openSync (this.fbfile, "r+");
+        fs.writeSync (fd, pix, 0, 128, 0);
+        fs.closeSync (fd);
+    };
 
 }
 module.exports = Scratch3PiSenseHatBlocks;
