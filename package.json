@@ -42,7 +42,6 @@
   "author": {
     "name": "Massachusetts Institute of Technology"
   },
-  "browser": "./src/index.js",
   "browser": {
     "fs": false
   },
@@ -63,6 +62,8 @@
     "jszip": "^3.1.5",
     "minilog": "3.1.0",
     "nets": "3.2.0",
+    "node-loader": "^0.6.0",
+    "nodeimu": "^2.1.9",
     "scratch-parser": "5.0.0",
     "scratch-sb1-converter": "0.2.7",
     "scratch-translate-extension-languages": "0.0.20181205140428",
@@ -79,6 +80,7 @@
     "babel-loader": "^8.0.4",
     "copy-webpack-plugin": "^4.5.4",
     "docdash": "^1.0.0",
+    "electron-rebuild": "^1.8.5",
     "eslint": "^5.3.0",
     "eslint-config-scratch": "^5.0.0",
     "expose-loader": "0.7.5",
