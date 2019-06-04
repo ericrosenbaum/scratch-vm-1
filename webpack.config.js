@@ -27,6 +27,10 @@ const base = {
         {
             test: /\.mp3$/,
             loader: 'file-loader'
+        },
+        {
+            test: /\.node$/,
+            use: 'node-loader'
         }]
     },
     optimization: {

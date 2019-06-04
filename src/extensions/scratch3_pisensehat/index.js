@@ -3,6 +3,7 @@ const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const Cast = require('../../util/cast');
 const fs = window.require('fs');
+var nodeimu = require("nodeimu");
 
 /**
  * Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.
@@ -49,8 +50,8 @@ class Scratch3PiSenseHatBlocks {
                 if (data.indexOf ('RPi-Sense FB') != -1)
                 {
                     this.fbfile = "/dev/fb" + fbtest.toString ();
-                    //nodeimu  = require('nodeimu');
-                    //this.IMU = new nodeimu.IMU();
+                    nodeimu  = require('nodeimu');
+                    this.IMU = new nodeimu.IMU();
                     break;
                 }
             }
@@ -151,7 +152,7 @@ class Scratch3PiSenseHatBlocks {
                         },
                     }
                 },
-/*		{
+		{
                     opcode: 'get_temp',
                     text: formatMessage({
                         id: 'pisensehat.get_temp',
@@ -160,7 +161,7 @@ class Scratch3PiSenseHatBlocks {
                     }),
                     blockType: BlockType.REPORTER
                 },
-*/
+
             ],
             menus: {
 		colours: ['off', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white'],
@@ -182,7 +183,7 @@ class Scratch3PiSenseHatBlocks {
         return 0;
     }
     
-/*    
+    
     get_temp ()
     {
         if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
@@ -197,7 +198,7 @@ class Scratch3PiSenseHatBlocks {
         var data = this.IMU.getValueSync();
         return Number (data.temperature).toFixed (2);
     };
-*/
+
     
 
     set_pixel_col (args)
