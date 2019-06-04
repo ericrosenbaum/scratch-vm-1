@@ -109,7 +109,7 @@ class Scratch3PiSenseHatBlocks {
                         B: {
                             type: ArgumentType.NUMBER,
                             defaultValue: 255
-                        },
+                        }
                     }
                 },
                 {
@@ -135,7 +135,7 @@ class Scratch3PiSenseHatBlocks {
                             type: ArgumentType.STRING,
                             menu: 'colours',
                             defaultValue: 'white'
-                        },
+                        }
                     }
                 },
                 {
@@ -158,7 +158,7 @@ class Scratch3PiSenseHatBlocks {
                         B: {
                             type: ArgumentType.NUMBER,
                             defaultValue: 255
-                        },
+                        }
                     }
                 },
                 {
@@ -174,7 +174,7 @@ class Scratch3PiSenseHatBlocks {
                             type: ArgumentType.STRING,
                             menu: 'colours',
                             defaultValue: 'white'
-                        },
+                        }
                     }
                 },
                 {
@@ -204,7 +204,7 @@ class Scratch3PiSenseHatBlocks {
                             type: ArgumentType.STRING,
                             menu: 'colours',
                             defaultValue: 'off'
-                        },
+                        }
                     }
                 },
                 {
@@ -234,7 +234,7 @@ class Scratch3PiSenseHatBlocks {
                             type: ArgumentType.STRING,
                             menu: 'colours',
                             defaultValue: 'off'
-                        },
+                        }
                     }
                 },
 		{
@@ -290,12 +290,12 @@ class Scratch3PiSenseHatBlocks {
                         description: 'gets yaw'
                     }),
                     blockType: BlockType.REPORTER
-                },
+                }
             ],
             menus: {
 		colours: ['off', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white'],
 		coords: ['0','1','2','3','4','5','6','7'],
-		rots: ['0', '90', '180', '270'],
+		rots: ['0', '90', '180', '270']
             }
         };
     }
