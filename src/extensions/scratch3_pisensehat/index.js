@@ -37,9 +37,13 @@ class Scratch3PiSenseHatBlocks {
          * @type {Runtime}
          */
         this.runtime = runtime;
-	
+
+        // global colours
+        this._fg = [255, 255, 255];
+        this._bg = [0, 0, 0];
+
         // find the framebuffer on the SenseHAT
-	this.fbfile = "";
+        this.fbfile = "";
         var fbtest = 0;
         while (1)
         {
@@ -157,9 +161,30 @@ class Scratch3PiSenseHatBlocks {
                             menu: 'coords',
                             defaultValue: '0'
                         },
-			COLOUR: {
-	                    type: ArgumentType.COLOR
-			}
+                        COLOUR: {
+                            type: ArgumentType.COLOR
+                        }
+                    }
+                },
+                {
+                    opcode: 'set_pixel_fg',
+                    text: formatMessage({
+                        id: 'pisensehat.set_pixel_fg',
+                        default: 'set pixel [X],[Y]',
+                        description: 'set pixel to foreground colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        X: {
+                            type: ArgumentType.STRING,
+                            menu: 'coords',
+                            defaultValue: '0'
+                        },
+                        Y: {
+                            type: ArgumentType.STRING,
+                            menu: 'coords',
+                            defaultValue: '0'
+                        },
                     }
                 },
                 {
@@ -210,9 +235,46 @@ class Scratch3PiSenseHatBlocks {
                     }),
                     blockType: BlockType.COMMAND,
                     arguments: {
-			COLOUR: {
-	                    type: ArgumentType.COLOR
-			}
+                        COLOUR: {
+                            type: ArgumentType.COLOR
+                        }
+                    }
+                },
+                {
+                    opcode: 'set_all_pixels_fg',
+                    text: formatMessage({
+                        id: 'pisensehat.set_all_pixels_fg',
+                        default: 'set all pixels',
+                        description: 'set all pixels to foreground colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                },
+                {
+                    opcode: 'set_fg',
+                    text: formatMessage({
+                        id: 'pisensehat.set_fg',
+                        default: 'set foreground to [COLOUR]',
+                        description: 'set foreground colour from colour picker'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        COLOUR: {
+                            type: ArgumentType.COLOR
+                        }
+                    }
+                },
+                {
+                    opcode: 'set_bg',
+                    text: formatMessage({
+                        id: 'pisensehat.set_bg',
+                        default: 'set background to [COLOUR]',
+                        description: 'set background colour from colour picker'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        COLOUR: {
+                            type: ArgumentType.COLOR
+                        }
                     }
                 },
                 {
@@ -224,15 +286,15 @@ class Scratch3PiSenseHatBlocks {
                     }),
                     blockType: BlockType.COMMAND,
                     arguments: {
-			LETTER: {
-			    type: ArgumentType.STRING,
-			    defaultValue: 'A'
-			},
-			ROT: {
-			    type: ArgumentType.STRING,
-			    menu: 'rots',
-			    defaultValue: '0'
-			},
+                        LETTER: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'A'
+                        },
+                        ROT: {
+                            type: ArgumentType.STRING,
+                            menu: 'rots',
+                            defaultValue: '0'
+                        },
                         COLOUR: {
                             type: ArgumentType.STRING,
                             menu: 'colours',
@@ -254,15 +316,15 @@ class Scratch3PiSenseHatBlocks {
                     }),
                     blockType: BlockType.COMMAND,
                     arguments: {
-			MESSAGE: {
-			    type: ArgumentType.STRING,
-			    defaultValue: 'Hello!'
-			},
-			ROT: {
-			    type: ArgumentType.STRING,
-			    menu: 'rots',
-			    defaultValue: '0'
-			},
+                        MESSAGE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'Hello!'
+                        },
+                        ROT: {
+                            type: ArgumentType.STRING,
+                            menu: 'rots',
+                            defaultValue: '0'
+                        },
                         COLOUR: {
                             type: ArgumentType.STRING,
                             menu: 'colours',
@@ -275,7 +337,7 @@ class Scratch3PiSenseHatBlocks {
                         }
                     }
                 },
-		{
+                {
                     opcode: 'get_temp',
                     text: formatMessage({
                         id: 'pisensehat.get_temp',
@@ -284,7 +346,7 @@ class Scratch3PiSenseHatBlocks {
                     }),
                     blockType: BlockType.REPORTER
                 },
-		{
+                {
                     opcode: 'get_press',
                     text: formatMessage({
                         id: 'pisensehat.get_press',
@@ -293,7 +355,7 @@ class Scratch3PiSenseHatBlocks {
                     }),
                     blockType: BlockType.REPORTER
                 },
-		{
+                {
                     opcode: 'get_humid',
                     text: formatMessage({
                         id: 'pisensehat.get_humid',
@@ -302,7 +364,7 @@ class Scratch3PiSenseHatBlocks {
                     }),
                     blockType: BlockType.REPORTER
                 },
-		{
+                {
                     opcode: 'get_ox',
                     text: formatMessage({
                         id: 'pisensehat.get_ox',
@@ -311,7 +373,7 @@ class Scratch3PiSenseHatBlocks {
                     }),
                     blockType: BlockType.REPORTER
                 },
-		{
+                {
                     opcode: 'get_oy',
                     text: formatMessage({
                         id: 'pisensehat.get_oy',
@@ -320,7 +382,7 @@ class Scratch3PiSenseHatBlocks {
                     }),
                     blockType: BlockType.REPORTER
                 },
-		{
+                {
                     opcode: 'get_oz',
                     text: formatMessage({
                         id: 'pisensehat.get_oz',
@@ -331,9 +393,9 @@ class Scratch3PiSenseHatBlocks {
                 }
             ],
             menus: {
-		colours: ['off', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white'],
-		coords: ['0','1','2','3','4','5','6','7'],
-		rots: ['0', '90', '180', '270']
+                colours: ['off', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white'],
+                coords: ['0','1','2','3','4','5','6','7'],
+                rots: ['0', '90', '180', '270']
             }
         };
     }
@@ -464,10 +526,10 @@ class Scratch3PiSenseHatBlocks {
         const x = Cast.toNumber(args.X);
         const y = Cast.toNumber(args.Y);
 
-	const color = Cast.toRgbColorList(args.COLOUR);
-	const r = color[0];
-	const g = color[1];
-	const b = color[2];
+        const color = Cast.toRgbColorList(args.COLOUR);
+        const r = color[0];
+        const g = color[1];
+        const b = color[2];
 
         var pix = new Uint8Array (2);
         var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
@@ -487,6 +549,25 @@ class Scratch3PiSenseHatBlocks {
 
         var pix = new Uint8Array (2);
         var val = this._map_colour (col);
+
+        pix[0] = val / 256;
+        pix[1] = val % 256;
+        fd = fs.openSync (this.fbfile, "r+");
+        fs.writeSync (fd, pix, 0, 2, y * 16 + x * 2);
+        fs.closeSync (fd);
+    }
+
+    set_pixel_fg (args)
+    {
+        const x = Cast.toNumber(args.X);
+        const y = Cast.toNumber(args.Y);
+
+        const r = this._fg[0];
+        const g = this._fg[1];
+        const b = this._fg[2];
+
+        var pix = new Uint8Array (2);
+        var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
 
         pix[0] = val / 256;
         pix[1] = val % 256;
@@ -518,9 +599,9 @@ class Scratch3PiSenseHatBlocks {
     set_all_pixels_new (args)
     {
         const color = Cast.toRgbColorList(args.COLOUR);
-	const r = color[0];
-	const g = color[1];
-	const b = color[2];
+        const r = color[0];
+        const g = color[1];
+        const b = color[2];
 
         var pix = new Uint8Array (128);
         var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
@@ -552,6 +633,42 @@ class Scratch3PiSenseHatBlocks {
         fd = fs.openSync (this.fbfile, "r+");
         fs.writeSync (fd, pix, 0, 128, 0);
         fs.closeSync (fd);
+    }
+
+    set_all_pixels_fg (args)
+    {
+        const r = this._fg[0];
+        const g = this._fg[1];
+        const b = this._fg[2];
+
+        var pix = new Uint8Array (128);
+        var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
+        var count = 0;
+        while (count < 64)
+        {
+            pix[count * 2] = val / 256;
+            pix[count * 2 + 1] = val % 256;
+            count++;
+        }
+        fd = fs.openSync (this.fbfile, "r+");
+        fs.writeSync (fd, pix, 0, 128, 0);
+        fs.closeSync (fd);
+    }
+
+    set_fg (args)
+    {
+        const color = Cast.toRgbColorList(args.COLOUR);
+        this._fg[0] = color[0];
+        this._fg[1] = color[1];
+        this._fg[2] = color[2];
+    }
+
+    set_bg (args)
+    {
+        const color = Cast.toRgbColorList(args.COLOUR);
+        this._bg[0] = color[0];
+        this._bg[1] = color[1];
+        this._bg[2] = color[2];
     }
 
     _map_orient (pos, orient)
