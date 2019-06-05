@@ -87,6 +87,169 @@ class Scratch3PiSenseHatBlocks {
             blockIconURI: blockIconURI,
             blocks: [
                 {
+                    opcode: 'set_fg',
+                    text: formatMessage({
+                        id: 'pisensehat.set_fg',
+                        default: 'set colour to [COLOUR]',
+                        description: 'set foreground colour from colour picker'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        COLOUR: {
+                            type: ArgumentType.COLOR
+                        }
+                    }
+                },
+                {
+                    opcode: 'set_bg',
+                    text: formatMessage({
+                        id: 'pisensehat.set_bg',
+                        default: 'set background to [COLOUR]',
+                        description: 'set background colour from colour picker'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        COLOUR: {
+                            type: ArgumentType.COLOR
+                        }
+                    }
+                },
+                {
+                    opcode: 'set_pixel_new',
+                    text: formatMessage({
+                        id: 'pisensehat.set_pixel_new',
+                        default: 'set pixel x [X] y [Y] to [COLOUR]',
+                        description: 'set pixel from colour picker'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        X: {
+                            type: ArgumentType.STRING,
+                            menu: 'coords',
+                            defaultValue: '0'
+                        },
+                        Y: {
+                            type: ArgumentType.STRING,
+                            menu: 'coords',
+                            defaultValue: '0'
+                        },
+                        COLOUR: {
+                            type: ArgumentType.COLOR
+                        }
+                    }
+                },
+                {
+                    opcode: 'set_orient',
+                    text: formatMessage({
+                        id: 'pisensehat.set_orient',
+                        default: 'set rotation to [ROT] degrees',
+                        description: 'set rotation of LED matrix'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        ROT: {
+                            type: ArgumentType.STRING,
+                            menu: 'rots',
+                            defaultValue: '0'
+                        }
+                    }
+                },
+                {
+                    opcode: 'all_off',
+                    text: formatMessage({
+                        id: 'pisensehat.all_off',
+                        default: 'clear display',
+                        description: 'turn off all LEDs'
+                    }),
+                    blockType: BlockType.COMMAND
+                },
+                {
+                    opcode: 'show_letter_glob',
+                    text: formatMessage({
+                        id: 'pisensehat.show_letter_glob',
+                        default: 'display character [LETTER]',
+                        description: 'show letter in foreground colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        LETTER: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'A'
+                        },
+                    }
+                },
+                {
+                    opcode: 'scroll_message_glob',
+                    text: formatMessage({
+                        id: 'pisensehat.scroll_message_glob',
+                        default: 'display text [MESSAGE]',
+                        description: 'scroll message across in foreground colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        MESSAGE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'Hello!'
+                        }
+                    }
+                },
+                '---',
+                {
+                    opcode: 'get_temp',
+                    text: formatMessage({
+                        id: 'pisensehat.get_temp',
+                        default: 'temperature',
+                        description: 'gets temperature'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+                {
+                    opcode: 'get_press',
+                    text: formatMessage({
+                        id: 'pisensehat.get_press',
+                        default: 'pressure',
+                        description: 'gets pressure'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+                {
+                    opcode: 'get_humid',
+                    text: formatMessage({
+                        id: 'pisensehat.get_humid',
+                        default: 'humidity',
+                        description: 'gets humidity'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+                {
+                    opcode: 'get_ox',
+                    text: formatMessage({
+                        id: 'pisensehat.get_ox',
+                        default: 'roll',
+                        description: 'gets roll'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+                {
+                    opcode: 'get_oy',
+                    text: formatMessage({
+                        id: 'pisensehat.get_oy',
+                        default: 'pitch',
+                        description: 'gets pitch'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+                {
+                    opcode: 'get_oz',
+                    text: formatMessage({
+                        id: 'pisensehat.get_oz',
+                        default: 'yaw',
+                        description: 'gets yaw'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+                '---',
+                {
                     opcode: 'set_pixel',
                     text: formatMessage({
                         id: 'pisensehat.set_pixel',
@@ -146,51 +309,6 @@ class Scratch3PiSenseHatBlocks {
                     }
                 },
                 {
-                    opcode: 'set_pixel_new',
-                    text: formatMessage({
-                        id: 'pisensehat.set_pixel_new',
-                        default: 'set pixel [X],[Y] to [COLOUR]',
-                        description: 'set pixel from colour picker'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        X: {
-                            type: ArgumentType.STRING,
-                            menu: 'coords',
-                            defaultValue: '0'
-                        },
-                        Y: {
-                            type: ArgumentType.STRING,
-                            menu: 'coords',
-                            defaultValue: '0'
-                        },
-                        COLOUR: {
-                            type: ArgumentType.COLOR
-                        }
-                    }
-                },
-                {
-                    opcode: 'set_pixel_fg',
-                    text: formatMessage({
-                        id: 'pisensehat.set_pixel_fg',
-                        default: 'set pixel [X],[Y]',
-                        description: 'set pixel to foreground colour'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        X: {
-                            type: ArgumentType.STRING,
-                            menu: 'coords',
-                            defaultValue: '0'
-                        },
-                        Y: {
-                            type: ArgumentType.STRING,
-                            menu: 'coords',
-                            defaultValue: '0'
-                        },
-                    }
-                },
-                {
                     opcode: 'set_all_pixels',
                     text: formatMessage({
                         id: 'pisensehat.set_all_pixels',
@@ -230,73 +348,6 @@ class Scratch3PiSenseHatBlocks {
                     }
                 },
                 {
-                    opcode: 'set_all_pixels_new',
-                    text: formatMessage({
-                        id: 'pisensehat.set_all_pixels_new',
-                        default: 'set all pixels to [COLOUR]',
-                        description: 'set all pixels from colour picker'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        COLOUR: {
-                            type: ArgumentType.COLOR
-                        }
-                    }
-                },
-                {
-                    opcode: 'set_all_pixels_fg',
-                    text: formatMessage({
-                        id: 'pisensehat.set_all_pixels_fg',
-                        default: 'set all pixels',
-                        description: 'set all pixels to foreground colour'
-                    }),
-                    blockType: BlockType.COMMAND,
-                },
-                {
-                    opcode: 'set_fg',
-                    text: formatMessage({
-                        id: 'pisensehat.set_fg',
-                        default: 'set foreground to [COLOUR]',
-                        description: 'set foreground colour from colour picker'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        COLOUR: {
-                            type: ArgumentType.COLOR
-                        }
-                    }
-                },
-                {
-                    opcode: 'set_bg',
-                    text: formatMessage({
-                        id: 'pisensehat.set_bg',
-                        default: 'set background to [COLOUR]',
-                        description: 'set background colour from colour picker'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        COLOUR: {
-                            type: ArgumentType.COLOR
-                        }
-                    }
-                },
-                {
-                    opcode: 'set_orient',
-                    text: formatMessage({
-                        id: 'pisensehat.set_orient',
-                        default: 'set rotation to [ROT]',
-                        description: 'set rotation of LED matrix'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        ROT: {
-                            type: ArgumentType.STRING,
-                            menu: 'rots',
-                            defaultValue: '0'
-                        }
-                    }
-                },
-                {
                     opcode: 'show_letter',
                     text: formatMessage({
                         id: 'pisensehat.show_letter',
@@ -324,21 +375,6 @@ class Scratch3PiSenseHatBlocks {
                             menu: 'colours',
                             defaultValue: 'off'
                         }
-                    }
-                },
-                {
-                    opcode: 'show_letter_glob',
-                    text: formatMessage({
-                        id: 'pisensehat.show_letter_glob',
-                        default: 'show letter [LETTER]',
-                        description: 'show letter in foreground colour'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        LETTER: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'A'
-                        },
                     }
                 },
                 {
@@ -370,90 +406,6 @@ class Scratch3PiSenseHatBlocks {
                             defaultValue: 'off'
                         }
                     }
-                },
-                {
-                    opcode: 'scroll_message_glob',
-                    text: formatMessage({
-                        id: 'pisensehat.scroll_message_glob',
-                        default: 'scroll message [MESSAGE]',
-                        description: 'scroll message across in foreground colour'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        MESSAGE: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'Hello!'
-                        },
-                        ROT: {
-                            type: ArgumentType.STRING,
-                            menu: 'rots',
-                            defaultValue: '0'
-                        },
-                        COLOUR: {
-                            type: ArgumentType.STRING,
-                            menu: 'colours',
-                            defaultValue: 'white'
-                        },
-                        BCOLOUR: {
-                            type: ArgumentType.STRING,
-                            menu: 'colours',
-                            defaultValue: 'off'
-                        }
-                    }
-                },
-                {
-                    opcode: 'get_temp',
-                    text: formatMessage({
-                        id: 'pisensehat.get_temp',
-                        default: 'temperature',
-                        description: 'gets temperature'
-                    }),
-                    blockType: BlockType.REPORTER
-                },
-                {
-                    opcode: 'get_press',
-                    text: formatMessage({
-                        id: 'pisensehat.get_press',
-                        default: 'pressure',
-                        description: 'gets pressure'
-                    }),
-                    blockType: BlockType.REPORTER
-                },
-                {
-                    opcode: 'get_humid',
-                    text: formatMessage({
-                        id: 'pisensehat.get_humid',
-                        default: 'humidity',
-                        description: 'gets humidity'
-                    }),
-                    blockType: BlockType.REPORTER
-                },
-                {
-                    opcode: 'get_ox',
-                    text: formatMessage({
-                        id: 'pisensehat.get_ox',
-                        default: 'roll',
-                        description: 'gets roll'
-                    }),
-                    blockType: BlockType.REPORTER
-                },
-                {
-                    opcode: 'get_oy',
-                    text: formatMessage({
-                        id: 'pisensehat.get_oy',
-                        default: 'pitch',
-                        description: 'gets pitch'
-                    }),
-                    blockType: BlockType.REPORTER
-                },
-                {
-                    opcode: 'get_oz',
-                    text: formatMessage({
-                        id: 'pisensehat.get_oz',
-                        default: 'yaw',
-                        description: 'gets yaw'
-                    }),
-                    blockType: BlockType.REPORTER
                 }
             ],
             menus: {
@@ -572,14 +524,25 @@ class Scratch3PiSenseHatBlocks {
         pix = new Uint8Array (2);
         pix[0] = val / 256;
         pix[1] = val % 256;
-	if (this._orient == 90)
-	    pos = x * 8 + (7 - y);
-	else if (this._orient == 180)
-	    pos = 63 - (y * 8 + x);
-	else if (this._orient == 270)
-	    pos = (7 - x) * 8 + y;
-	else
-	    pos = y * 8 + x;
+        pos = y * 8 + x;
+        fd = fs.openSync (this.fbfile, "r+");
+        fs.writeSync (fd, pix, 0, 2, pos * 2);
+        fs.closeSync (fd);
+    }
+
+    _pixel_remap (x, y, val)
+    {
+        pix = new Uint8Array (2);
+        pix[0] = val / 256;
+        pix[1] = val % 256;
+        if (this._orient == 90)
+            pos = x * 8 + (7 - y);
+        else if (this._orient == 180)
+            pos = 63 - (y * 8 + x);
+        else if (this._orient == 270)
+            pos = (7 - x) * 8 + y;
+        else
+            pos = y * 8 + x;
         fd = fs.openSync (this.fbfile, "r+");
         fs.writeSync (fd, pix, 0, 2, pos * 2);
         fs.closeSync (fd);
@@ -598,17 +561,6 @@ class Scratch3PiSenseHatBlocks {
         this._pixel (x, y, val);
     }
 
-    set_pixel_new (args)
-    {
-        x = Cast.toNumber (args.X);
-        y = Cast.toNumber (args.Y);
-
-        color = Cast.toRgbColorList (args.COLOUR);
-        val = (Math.trunc (color[2] / 32) * 1024) + (Math.trunc (color[0] / 32) * 32) + Math.trunc (color[1] / 32);
-
-        this._pixel (x, y, val);
-    }
-
     set_pixel_col (args)
     {
         x = Cast.toNumber (args.X);
@@ -620,14 +572,15 @@ class Scratch3PiSenseHatBlocks {
         this._pixel (x, y, val);
     }
 
-    set_pixel_fg (args)
+    set_pixel_new (args)
     {
         x = Cast.toNumber (args.X);
         y = Cast.toNumber (args.Y);
 
-        val = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
+        color = Cast.toRgbColorList (args.COLOUR);
+        val = (Math.trunc (color[2] / 32) * 1024) + (Math.trunc (color[0] / 32) * 32) + Math.trunc (color[1] / 32);
 
-        this._pixel (x, y, val);
+        this._pixel_remap (x, y, val);
     }
 
     _all_pixels (val)
@@ -643,6 +596,11 @@ class Scratch3PiSenseHatBlocks {
         fd = fs.openSync (this.fbfile, "r+");
         fs.writeSync (fd, pix, 0, 128, 0);
         fs.closeSync (fd);
+    }
+
+    all_off ()
+    {
+        this._all_pixels (0);
     }
 
     set_all_pixels (args)
@@ -692,6 +650,8 @@ class Scratch3PiSenseHatBlocks {
         this._bg[0] = color[0];
         this._bg[1] = color[1];
         this._bg[2] = color[2];
+        val = (Math.trunc (this._bg[2] / 32) * 1024) + (Math.trunc (this._bg[0] / 32) * 32) + Math.trunc (this._bg[1] / 32);
+        this._all_pixels (val)
     }
 
     set_orient (args)
@@ -731,8 +691,8 @@ class Scratch3PiSenseHatBlocks {
 
     _load_letter (lett)
     {
-        var lgr = new Uint8Array (80);
         const dict = " +-*/!\"#$><0123456789.=)(ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz?,;:|@%[&_']\\~"
+        lgr = new Uint8Array (80);
         inv = 90 - dict.indexOf (lett);
         if (inv > 90) inv = 90;
         fd = fs.openSync ('/usr/lib/scratch3/sense_hat_text.bmp', 'r');
@@ -745,9 +705,8 @@ class Scratch3PiSenseHatBlocks {
     _letter (lett, orient, valf, valb)
     {
         pix = new Uint8Array (128);
-        count = 0;
         lgr = this._load_letter (lett);
-        while (count < 64)
+        for (count = 0; count < 64; count++)
         {
             map = this._map_orient (count, orient);
             if (map == 40) val = valb;
@@ -755,7 +714,6 @@ class Scratch3PiSenseHatBlocks {
             else val = valb;
             pix[count * 2] = val / 256;
             pix[count * 2 + 1] = val % 256;
-            count++;
         }
         fd = fs.openSync (this.fbfile, "r+");
         fs.writeSync (fd, pix, 0, 128, 0);
@@ -953,7 +911,7 @@ class Scratch3PiSenseHatBlocks {
         valf = this._map_colour (colour);
         valb = this._map_colour (bg);
 
-	this._message (message, orient, valf, valb);
+        this._message (message, orient, valf, valb);
     }
 
 }
