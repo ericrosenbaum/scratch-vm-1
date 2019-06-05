@@ -281,11 +281,27 @@ class Scratch3PiSenseHatBlocks {
                     }
                 },
                 {
+                    opcode: 'set_orient',
+                    text: formatMessage({
+                        id: 'pisensehat.set_orient',
+                        default: 'set rotation to [ROT]',
+                        description: 'set rotation of LED matrix'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        ROT: {
+                            type: ArgumentType.STRING,
+                            menu: 'rots',
+                            defaultValue: '0'
+                        }
+                    }
+                },
+                {
                     opcode: 'show_letter',
                     text: formatMessage({
                         id: 'pisensehat.show_letter',
                         default: 'show letter [LETTER] at rotation [ROT] in [COLOUR] background [BCOLOUR]',
-                        description: 'show the letter at the desired rotation in the colour'
+                        description: 'show letter at rotation in colour'
                     }),
                     blockType: BlockType.COMMAND,
                     arguments: {
@@ -330,7 +346,37 @@ class Scratch3PiSenseHatBlocks {
                     text: formatMessage({
                         id: 'pisensehat.scroll_message',
                         default: 'scroll message [MESSAGE] at rotation [ROT] in [COLOUR] background [BCOLOUR]',
-                        description: 'scroll the message across at the desired rotation in the colour'
+                        description: 'scroll message across at rotation in colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        MESSAGE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'Hello!'
+                        },
+                        ROT: {
+                            type: ArgumentType.STRING,
+                            menu: 'rots',
+                            defaultValue: '0'
+                        },
+                        COLOUR: {
+                            type: ArgumentType.STRING,
+                            menu: 'colours',
+                            defaultValue: 'white'
+                        },
+                        BCOLOUR: {
+                            type: ArgumentType.STRING,
+                            menu: 'colours',
+                            defaultValue: 'off'
+                        }
+                    }
+                },
+                {
+                    opcode: 'scroll_message_glob',
+                    text: formatMessage({
+                        id: 'pisensehat.scroll_message_glob',
+                        default: 'scroll message [MESSAGE]',
+                        description: 'scroll message across in foreground colour'
                     }),
                     blockType: BlockType.COMMAND,
                     arguments: {
@@ -526,8 +572,16 @@ class Scratch3PiSenseHatBlocks {
         pix = new Uint8Array (2);
         pix[0] = val / 256;
         pix[1] = val % 256;
+	if (this._orient == 90)
+	    pos = x * 8 + (7 - y);
+	else if (this._orient == 180)
+	    pos = 63 - (y * 8 + x);
+	else if (this._orient == 270)
+	    pos = (7 - x) * 8 + y;
+	else
+	    pos = y * 8 + x;
         fd = fs.openSync (this.fbfile, "r+");
-        fs.writeSync (fd, pix, 0, 2, y * 16 + x * 2);
+        fs.writeSync (fd, pix, 0, 2, pos * 2);
         fs.closeSync (fd);
     }
 
@@ -626,7 +680,7 @@ class Scratch3PiSenseHatBlocks {
 
     set_fg (args)
     {
-        const color = Cast.toRgbColorList(args.COLOUR);
+        color = Cast.toRgbColorList(args.COLOUR);
         this._fg[0] = color[0];
         this._fg[1] = color[1];
         this._fg[2] = color[2];
@@ -634,10 +688,16 @@ class Scratch3PiSenseHatBlocks {
 
     set_bg (args)
     {
-        const color = Cast.toRgbColorList(args.COLOUR);
+        color = Cast.toRgbColorList(args.COLOUR);
         this._bg[0] = color[0];
         this._bg[1] = color[1];
         this._bg[2] = color[2];
+    }
+
+    set_orient (args)
+    {
+        orient = Cast.toNumber(args.ROT);
+        this._orient = orient;
     }
 
     _map_orient (pos, orient)
@@ -684,8 +744,8 @@ class Scratch3PiSenseHatBlocks {
 
     _letter (lett, orient, valf, valb)
     {
-        var pix = new Uint8Array (128);
-        var count = 0;
+        pix = new Uint8Array (128);
+        count = 0;
         lgr = this._load_letter (lett);
         while (count < 64)
         {
@@ -725,19 +785,12 @@ class Scratch3PiSenseHatBlocks {
         this._letter (lett, orient, valf, valb);
     }
 
-    scroll_message (args)
+    _message (message, orient, valf, valb)
     {
-        const txt = Cast.toString(args.MESSAGE);
-        const orient = Cast.toNumber(args.ROT);
-        const colour = Cast.toString(args.COLOUR);
-        const bg = Cast.toString(args.BCOLOUR);
-
-        var pix = new Uint8Array (128);
-        var char_ind = 0;
-        var lett_ind = 0;
-        var msg = String (txt);
-        valf = this._map_colour (colour);
-        valb = this._map_colour (bg);
+        pix = new Uint8Array (128);
+        char_ind = 0;
+        lett_ind = 0;
+        //msg = String (message);
         pix0 = valf / 256;
         pix1 = valf % 256;
         bg0 = valb / 256;
@@ -753,9 +806,9 @@ class Scratch3PiSenseHatBlocks {
         fs.writeSync (fd, pix, 0, 128, 0);
         fs.closeSync (fd);
 
-        for (lett_ind = 0; lett_ind < msg.length + 2; lett_ind++)
+        for (lett_ind = 0; lett_ind < message.length + 2; lett_ind++)
         {
-            lgrid = this._load_letter (msg[lett_ind]);
+            lgrid = this._load_letter (message[lett_ind]);
             for (char_ind = 0; char_ind < 6; char_ind++)
             {
                 // scroll the grid
@@ -873,13 +926,34 @@ class Scratch3PiSenseHatBlocks {
                 fs.closeSync (fd);
 
                 // pause for a bit
-                var start = new Date().getTime();
-                for (var i = 0; i < 1e7; i++)
+                start = new Date().getTime();
+                for (i = 0; i < 1e7; i++)
                 {
                     if ((new Date().getTime() - start) > 100) break;
                 }
             }
         }
+    }
+
+    scroll_message_glob (args)
+    {
+        message = Cast.toString (args.MESSAGE);
+        valf = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
+        valb = (Math.trunc (this._bg[2] / 32) * 1024) + (Math.trunc (this._bg[0] / 32) * 32) + Math.trunc (this._bg[1] / 32);
+
+        this._message (message, this._orient, valf, valb);
+    }
+
+    scroll_message (args)
+    {
+        message = Cast.toString (args.MESSAGE);
+        orient = Cast.toNumber (args.ROT);
+        colour = Cast.toString (args.COLOUR);
+        bg = Cast.toString (args.BCOLOUR);
+        valf = this._map_colour (colour);
+        valb = this._map_colour (bg);
+
+	this._message (message, orient, valf, valb);
     }
 
 }
