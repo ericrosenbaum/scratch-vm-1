@@ -139,6 +139,30 @@ class Scratch3PiSenseHatBlocks {
                     }
                 },
                 {
+                    opcode: 'set_pixel_new',
+                    text: formatMessage({
+                        id: 'pisensehat.set_pixel_new',
+                        default: 'set pixel [X],[Y] to [COLOUR]',
+                        description: 'set pixel from colour picker'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        X: {
+                            type: ArgumentType.STRING,
+                            menu: 'coords',
+                            defaultValue: '0'
+                        },
+                        Y: {
+                            type: ArgumentType.STRING,
+                            menu: 'coords',
+                            defaultValue: '0'
+                        },
+			COLOUR: {
+	                    type: ArgumentType.COLOR
+			}
+                    }
+                },
+                {
                     opcode: 'set_all_pixels',
                     text: formatMessage({
                         id: 'pisensehat.set_all_pixels',
@@ -175,6 +199,20 @@ class Scratch3PiSenseHatBlocks {
                             menu: 'colours',
                             defaultValue: 'white'
                         }
+                    }
+                },
+                {
+                    opcode: 'set_all_pixels_new',
+                    text: formatMessage({
+                        id: 'pisensehat.set_all_pixels_new',
+                        default: 'set all pixels to [COLOUR]',
+                        description: 'set all pixels from colour picker'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+			COLOUR: {
+	                    type: ArgumentType.COLOR
+			}
                     }
                 },
                 {
@@ -421,6 +459,26 @@ class Scratch3PiSenseHatBlocks {
         fs.closeSync (fd);
     }
 
+    set_pixel_new (args)
+    {
+        const x = Cast.toNumber(args.X);
+        const y = Cast.toNumber(args.Y);
+
+	const color = Cast.toRgbColorList(args.COLOUR);
+	const r = color[0];
+	const g = color[1];
+	const b = color[2];
+
+        var pix = new Uint8Array (2);
+        var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
+
+        pix[0] = val / 256;
+        pix[1] = val % 256;
+        fd = fs.openSync (this.fbfile, "r+");
+        fs.writeSync (fd, pix, 0, 2, y * 16 + x * 2);
+        fs.closeSync (fd);
+    }
+
     set_pixel_col (args)
     {
         const x = Cast.toNumber(args.X);
@@ -442,6 +500,27 @@ class Scratch3PiSenseHatBlocks {
         const r = Cast.toNumber(args.R);
         const g = Cast.toNumber(args.G);
         const b = Cast.toNumber(args.B);
+
+        var pix = new Uint8Array (128);
+        var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
+        var count = 0;
+        while (count < 64)
+        {
+            pix[count * 2] = val / 256;
+            pix[count * 2 + 1] = val % 256;
+            count++;
+        }
+        fd = fs.openSync (this.fbfile, "r+");
+        fs.writeSync (fd, pix, 0, 128, 0);
+        fs.closeSync (fd);
+    }
+
+    set_all_pixels_new (args)
+    {
+        const color = Cast.toRgbColorList(args.COLOUR);
+	const r = color[0];
+	const g = color[1];
+	const b = color[2];
 
         var pix = new Uint8Array (128);
         var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
