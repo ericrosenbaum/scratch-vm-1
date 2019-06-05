@@ -42,6 +42,9 @@ class Scratch3PiSenseHatBlocks {
         this._fg = [255, 255, 255];
         this._bg = [0, 0, 0];
 
+        // global rotation
+        this._orient = 0;
+
         // find the framebuffer on the SenseHAT
         this.fbfile = "";
         var fbtest = 0;
@@ -308,6 +311,21 @@ class Scratch3PiSenseHatBlocks {
                     }
                 },
                 {
+                    opcode: 'show_letter_glob',
+                    text: formatMessage({
+                        id: 'pisensehat.show_letter_glob',
+                        default: 'show letter [LETTER]',
+                        description: 'show letter in foreground colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        LETTER: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'A'
+                        },
+                    }
+                },
+                {
                     opcode: 'scroll_message',
                     text: formatMessage({
                         id: 'pisensehat.scroll_message',
@@ -503,156 +521,107 @@ class Scratch3PiSenseHatBlocks {
         return 0;
     }
 
-    set_pixel (args)
+    _pixel (x, y, val)
     {
-        const x = Cast.toNumber(args.X);
-        const y = Cast.toNumber(args.Y);
-        const r = Cast.toNumber(args.R);
-        const g = Cast.toNumber(args.G);
-        const b = Cast.toNumber(args.B);
-
-        var pix = new Uint8Array (2);
-        var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
-
+        pix = new Uint8Array (2);
         pix[0] = val / 256;
         pix[1] = val % 256;
         fd = fs.openSync (this.fbfile, "r+");
         fs.writeSync (fd, pix, 0, 2, y * 16 + x * 2);
         fs.closeSync (fd);
+    }
+
+    set_pixel (args)
+    {
+        x = Cast.toNumber (args.X);
+        y = Cast.toNumber (args.Y);
+
+        r = Cast.toNumber (args.R);
+        g = Cast.toNumber (args.G);
+        b = Cast.toNumber (args.B);
+        val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
+
+        this._pixel (x, y, val);
     }
 
     set_pixel_new (args)
     {
-        const x = Cast.toNumber(args.X);
-        const y = Cast.toNumber(args.Y);
+        x = Cast.toNumber (args.X);
+        y = Cast.toNumber (args.Y);
 
-        const color = Cast.toRgbColorList(args.COLOUR);
-        const r = color[0];
-        const g = color[1];
-        const b = color[2];
+        color = Cast.toRgbColorList (args.COLOUR);
+        val = (Math.trunc (color[2] / 32) * 1024) + (Math.trunc (color[0] / 32) * 32) + Math.trunc (color[1] / 32);
 
-        var pix = new Uint8Array (2);
-        var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
-
-        pix[0] = val / 256;
-        pix[1] = val % 256;
-        fd = fs.openSync (this.fbfile, "r+");
-        fs.writeSync (fd, pix, 0, 2, y * 16 + x * 2);
-        fs.closeSync (fd);
+        this._pixel (x, y, val);
     }
 
     set_pixel_col (args)
     {
-        const x = Cast.toNumber(args.X);
-        const y = Cast.toNumber(args.Y);
-        const col = Cast.toString(args.COLOUR);
+        x = Cast.toNumber (args.X);
+        y = Cast.toNumber (args.Y);
 
-        var pix = new Uint8Array (2);
-        var val = this._map_colour (col);
+        col = Cast.toString (args.COLOUR);
+        val = this._map_colour (col);
 
-        pix[0] = val / 256;
-        pix[1] = val % 256;
-        fd = fs.openSync (this.fbfile, "r+");
-        fs.writeSync (fd, pix, 0, 2, y * 16 + x * 2);
-        fs.closeSync (fd);
+        this._pixel (x, y, val);
     }
 
     set_pixel_fg (args)
     {
-        const x = Cast.toNumber(args.X);
-        const y = Cast.toNumber(args.Y);
+        x = Cast.toNumber (args.X);
+        y = Cast.toNumber (args.Y);
 
-        const r = this._fg[0];
-        const g = this._fg[1];
-        const b = this._fg[2];
+        val = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
 
-        var pix = new Uint8Array (2);
-        var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
+        this._pixel (x, y, val);
+    }
 
-        pix[0] = val / 256;
-        pix[1] = val % 256;
+    _all_pixels (val)
+    {
+        pix = new Uint8Array (128);
+        count = 0;
+        while (count < 64)
+        {
+            pix[count * 2] = val / 256;
+            pix[count * 2 + 1] = val % 256;
+            count++;
+        }
         fd = fs.openSync (this.fbfile, "r+");
-        fs.writeSync (fd, pix, 0, 2, y * 16 + x * 2);
+        fs.writeSync (fd, pix, 0, 128, 0);
         fs.closeSync (fd);
     }
 
     set_all_pixels (args)
     {
-        const r = Cast.toNumber(args.R);
-        const g = Cast.toNumber(args.G);
-        const b = Cast.toNumber(args.B);
+        r = Cast.toNumber (args.R);
+        g = Cast.toNumber (args.G);
+        b = Cast.toNumber (args.B);
+        val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
 
-        var pix = new Uint8Array (128);
-        var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
-        var count = 0;
-        while (count < 64)
-        {
-            pix[count * 2] = val / 256;
-            pix[count * 2 + 1] = val % 256;
-            count++;
-        }
-        fd = fs.openSync (this.fbfile, "r+");
-        fs.writeSync (fd, pix, 0, 128, 0);
-        fs.closeSync (fd);
+        this._all_pixels (val);
     }
 
     set_all_pixels_new (args)
     {
-        const color = Cast.toRgbColorList(args.COLOUR);
-        const r = color[0];
-        const g = color[1];
-        const b = color[2];
+        color = Cast.toRgbColorList (args.COLOUR);
+        val = (Math.trunc (color[2] / 32) * 1024) + (Math.trunc (color[0] / 32) * 32) + Math.trunc (color[1] / 32);
 
-        var pix = new Uint8Array (128);
-        var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
-        var count = 0;
-        while (count < 64)
-        {
-            pix[count * 2] = val / 256;
-            pix[count * 2 + 1] = val % 256;
-            count++;
-        }
-        fd = fs.openSync (this.fbfile, "r+");
-        fs.writeSync (fd, pix, 0, 128, 0);
-        fs.closeSync (fd);
+        this._all_pixels (val);
     }
 
     set_all_pixels_col (args)
     {
-        const col = Cast.toString(args.COLOUR);
+        col = Cast.toString(args.COLOUR);
+        val = this._map_colour (col);
 
-        var pix = new Uint8Array (128);
-        var val = this._map_colour (col);
-        var count = 0;
-        while (count < 64)
-        {
-            pix[count * 2] = val / 256;
-            pix[count * 2 + 1] = val % 256;
-            count++;
-        }
-        fd = fs.openSync (this.fbfile, "r+");
-        fs.writeSync (fd, pix, 0, 128, 0);
-        fs.closeSync (fd);
+        this._all_pixels (val);
     }
 
     set_all_pixels_fg (args)
     {
-        const r = this._fg[0];
-        const g = this._fg[1];
-        const b = this._fg[2];
+        val = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
 
-        var pix = new Uint8Array (128);
-        var val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
-        var count = 0;
-        while (count < 64)
-        {
-            pix[count * 2] = val / 256;
-            pix[count * 2 + 1] = val % 256;
-            count++;
-        }
-        fd = fs.openSync (this.fbfile, "r+");
-        fs.writeSync (fd, pix, 0, 128, 0);
-        fs.closeSync (fd);
+        this._all_pixels (val);
     }
 
     set_fg (args)
@@ -713,19 +682,10 @@ class Scratch3PiSenseHatBlocks {
         return lgr;
     }
 
-    show_letter (args)
+    _letter (lett, orient, valf, valb)
     {
-        const lett = Cast.toString(args.LETTER);
-        const orient = Cast.toNumber(args.ROT);
-        const colour = Cast.toString(args.COLOUR);
-        const bg = Cast.toString(args.BCOLOUR);
-
-        //if (typeof (lett) != 'string') return;
-        if (lett.length != 1) return;
         var pix = new Uint8Array (128);
         var count = 0;
-        valf = this._map_colour (colour);
-        valb = this._map_colour (bg);
         lgr = this._load_letter (lett);
         while (count < 64)
         {
@@ -741,6 +701,29 @@ class Scratch3PiSenseHatBlocks {
         fs.writeSync (fd, pix, 0, 128, 0);
         fs.closeSync (fd);
     };
+
+    show_letter_glob (args)
+    {
+        lett = Cast.toString(args.LETTER);
+        valf = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
+        valb = (Math.trunc (this._bg[2] / 32) * 1024) + (Math.trunc (this._bg[0] / 32) * 32) + Math.trunc (this._bg[1] / 32);
+
+        if (lett.length != 1) return;
+        this._letter (lett, this._orient, valf, valb);
+    }
+
+    show_letter (args)
+    {
+        lett = Cast.toString(args.LETTER);
+        orient = Cast.toNumber(args.ROT);
+        colour = Cast.toString(args.COLOUR);
+        bg = Cast.toString(args.BCOLOUR);
+        valf = this._map_colour (colour);
+        valb = this._map_colour (bg);
+
+        if (lett.length != 1) return;
+        this._letter (lett, orient, valf, valb);
+    }
 
     scroll_message (args)
     {
