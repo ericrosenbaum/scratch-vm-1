@@ -227,6 +227,39 @@ class Scratch3PiSenseHatBlocks {
                     }
                 },
                 {
+                    opcode: 'when_moved',
+                    text: formatMessage({
+                        id: 'pisensehat.when_moved',
+                        default: 'when [MOVED]',
+                        description: 'when the SenseHAT is moved'
+                    }),
+                    blockType: BlockType.HAT,
+                    arguments: {
+                        MOVED: {
+                            type: ArgumentType.STRING,
+                            menu: 'moved',
+                            defaultValue: 'moved'
+                        }
+                    }
+                },
+                {
+                    opcode: 'when_tilted',
+                    text: formatMessage({
+                        id: 'pisensehat.when_tilted',
+                        default: 'when tilted [TILT]',
+                        description: 'when the SenseHAT is tilted'
+                    }),
+                    blockType: BlockType.HAT,
+                    arguments: {
+                        TILT: {
+                            type: ArgumentType.STRING,
+                            menu: 'tilt',
+                            defaultValue: 'forward'
+                        }
+                    }
+                },
+                '---',
+                {
                     opcode: 'get_temp',
                     text: formatMessage({
                         id: 'pisensehat.get_temp',
@@ -279,7 +312,7 @@ class Scratch3PiSenseHatBlocks {
                         description: 'gets yaw'
                     }),
                     blockType: BlockType.REPORTER
-                },
+/*                },
                 '---',
                 {
                     opcode: 'set_pixel',
@@ -437,14 +470,16 @@ class Scratch3PiSenseHatBlocks {
                             menu: 'colours',
                             defaultValue: 'off'
                         }
-                    }
+                    }*/
                 }
             ],
             menus: {
                 colours: ['off', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white'],
                 coords: ['0','1','2','3','4','5','6','7'],
                 rots: ['0', '90', '180', '270'],
-		stick: ['up arrow', 'down arrow', 'left arrow', 'right arrow', 'enter']
+		stick: ['up arrow', 'down arrow', 'left arrow', 'right arrow', 'enter'],
+		moved: ['moved', 'shaken'],
+		tilt: ['forward', 'backward', 'left', 'right']
             }
         };
     }
@@ -955,6 +990,48 @@ class Scratch3PiSenseHatBlocks {
     joystick_pushed (args, util)
     {
         return util.ioQuery('keyboard', 'getKeyIsDown', [args.STICK]);
+    }
+
+    when_moved (args)
+    {
+        moved = Cast.toString (args.MOVED);
+	if (moved === 'shaken') targ = 1.6;
+	else targ = 1.0;
+
+        if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
+        {
+            var data = new Uint8Array (56);
+            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
+            fs.readSync (fd, data, 0, 56, 0);
+            fs.closeSync (fd);
+            var view = new DataView (data.buffer, 0, 56);
+            x = Number (view.getInt16 (50, true) * 360 / 32768);
+            y = Number (view.getInt16 (52, true) * 360 / 32768);
+            z = Number (view.getInt16 (54, true) * 360 / 32768);
+        }
+	else
+	{
+	    var data = this.IMU.getValueSync ();
+	    if (data)
+	    {
+		console.log (data);
+		x = Number (data.fusionPose.x * 180 / Math.PI);
+		y = Number (data.fusionPose.y * 180 / Math.PI);
+		z = Number (data.fusionPose.z * 180 / Math.PI);
+	    }
+	    else console.log ("no data");
+	}
+
+	if (x > targ || x < (-1 * targ)) return true;
+	if (y > targ || y < (-1 * targ)) return true;
+	if (z > targ || z < (-1 * targ)) return true;
+	return false;
+    }
+
+    when_tilted (args)
+    {
+        tilt = Cast.toString (args.TILT);
+
     }
 }
 
