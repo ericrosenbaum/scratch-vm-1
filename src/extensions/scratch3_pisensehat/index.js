@@ -211,6 +211,22 @@ class Scratch3PiSenseHatBlocks {
                     }
                 },
                 {
+                    opcode: 'joystick_pushed',
+                    text: formatMessage({
+                        id: 'pisensehat.joystick_pushed',
+                        default: 'joystick [STICK] is pushed?',
+                        description: 'is the joystick pushed?'
+                    }),
+                    blockType: BlockType.BOOLEAN,
+                    arguments: {
+                        STICK: {
+                            type: ArgumentType.STRING,
+                            menu: 'stick',
+                            defaultValue: 'up arrow'
+                        }
+                    }
+                },
+                {
                     opcode: 'get_temp',
                     text: formatMessage({
                         id: 'pisensehat.get_temp',
@@ -936,6 +952,10 @@ class Scratch3PiSenseHatBlocks {
         return util.ioQuery('keyboard', 'getKeyIsDown', [args.STICK]);
     }
 
+    joystick_pushed (args, util)
+    {
+        return util.ioQuery('keyboard', 'getKeyIsDown', [args.STICK]);
+    }
 }
 
 module.exports = Scratch3PiSenseHatBlocks;
