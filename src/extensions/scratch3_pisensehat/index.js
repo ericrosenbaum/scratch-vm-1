@@ -195,6 +195,22 @@ class Scratch3PiSenseHatBlocks {
                 },
                 '---',
                 {
+                    opcode: 'when_joystick',
+                    text: formatMessage({
+                        id: 'pisensehat.when_joystick',
+                        default: 'when joystick [STICK] pushed',
+                        description: 'when the joystick is pushed'
+                    }),
+                    blockType: BlockType.HAT,
+                    arguments: {
+                        STICK: {
+                            type: ArgumentType.STRING,
+                            menu: 'stick',
+                            defaultValue: 'up arrow'
+                        }
+                    }
+                },
+                {
                     opcode: 'get_temp',
                     text: formatMessage({
                         id: 'pisensehat.get_temp',
@@ -411,7 +427,8 @@ class Scratch3PiSenseHatBlocks {
             menus: {
                 colours: ['off', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white'],
                 coords: ['0','1','2','3','4','5','6','7'],
-                rots: ['0', '90', '180', '270']
+                rots: ['0', '90', '180', '270'],
+		stick: ['up arrow', 'down arrow', 'left arrow', 'right arrow', 'enter']
             }
         };
     }
@@ -912,6 +929,11 @@ class Scratch3PiSenseHatBlocks {
         valb = this._map_colour (bg);
 
         this._message (message, orient, valf, valb);
+    }
+
+    when_joystick (args, util)
+    {
+        return util.ioQuery('keyboard', 'getKeyIsDown', [args.STICK]);
     }
 
 }
