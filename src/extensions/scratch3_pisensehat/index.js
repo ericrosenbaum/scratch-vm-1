@@ -230,17 +230,10 @@ class Scratch3PiSenseHatBlocks {
                     opcode: 'when_moved',
                     text: formatMessage({
                         id: 'pisensehat.when_moved',
-                        default: 'when [MOVED]',
-                        description: 'when the SenseHAT is moved'
+                        default: 'when shaken',
+                        description: 'when the SenseHAT is shaken'
                     }),
-                    blockType: BlockType.HAT,
-                    arguments: {
-                        MOVED: {
-                            type: ArgumentType.STRING,
-                            menu: 'moved',
-                            defaultValue: 'moved'
-                        }
-                    }
+                    blockType: BlockType.HAT
                 },
                 {
                     opcode: 'when_tilted',
@@ -992,11 +985,9 @@ class Scratch3PiSenseHatBlocks {
         return util.ioQuery('keyboard', 'getKeyIsDown', [args.STICK]);
     }
 
-    when_moved (args)
+    when_moved ()
     {
-        moved = Cast.toString (args.MOVED);
-	if (moved === 'shaken') targ = 1.6;
-	else targ = 1.0;
+	targ = 1.6;
 
         if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
         {
@@ -1005,21 +996,19 @@ class Scratch3PiSenseHatBlocks {
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
             var view = new DataView (data.buffer, 0, 56);
-            x = Number (view.getInt16 (50, true) * 360 / 32768);
-            y = Number (view.getInt16 (52, true) * 360 / 32768);
-            z = Number (view.getInt16 (54, true) * 360 / 32768);
+            x = Number (view.getInt16 (32, true) * 16 / 32768);
+            y = Number (view.getInt16 (34, true) * 16 / 32768);
+            z = Number (view.getInt16 (36, true) * 16 / 32768);
         }
 	else
 	{
 	    var data = this.IMU.getValueSync ();
 	    if (data)
 	    {
-		console.log (data);
-		x = Number (data.fusionPose.x * 180 / Math.PI);
-		y = Number (data.fusionPose.y * 180 / Math.PI);
-		z = Number (data.fusionPose.z * 180 / Math.PI);
+		x = Number (data.accel.x);
+		y = Number (data.accel.y);
+		z = Number (data.accel.z);
 	    }
-	    else console.log ("no data");
 	}
 
 	if (x > targ || x < (-1 * targ)) return true;
