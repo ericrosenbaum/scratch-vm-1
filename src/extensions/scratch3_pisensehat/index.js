@@ -1003,6 +1003,9 @@ class Scratch3PiSenseHatBlocks {
 
     when_moved ()
     {
+	let x = 0;
+	let y = 0;
+	let z = 0;
         if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
         {
             let data = new Uint8Array (56);
@@ -1010,18 +1013,18 @@ class Scratch3PiSenseHatBlocks {
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
             const view = new DataView (data.buffer, 0, 56);
-            const x = Number (view.getInt16 (32, true) * 16 / 32768);
-            const y = Number (view.getInt16 (34, true) * 16 / 32768);
-            const z = Number (view.getInt16 (36, true) * 16 / 32768);
+            x = Number (view.getInt16 (32, true) * 8 / 32768);
+            y = Number (view.getInt16 (34, true) * 8 / 32768);
+            z = Number (view.getInt16 (36, true) * 8 / 32768);
         }
         else
         {
             const data = this.IMU.getValueSync ();
             if (data)
             {
-                const x = Number (data.accel.x);
-                const y = Number (data.accel.y);
-                const z = Number (data.accel.z);
+                x = Number (data.accel.x);
+                y = Number (data.accel.y);
+                z = Number (data.accel.z);
             }
         }
         if (this._moved == 0)
