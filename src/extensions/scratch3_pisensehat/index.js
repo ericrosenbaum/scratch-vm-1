@@ -45,8 +45,8 @@ class Scratch3PiSenseHatBlocks {
         // global rotation
         this._orient = 0;
 
-	// movement timeout
-	this._moved = 0;
+        // movement timeout
+        this._moved = 0;
 
         // find the framebuffer on the SenseHAT
         this.fbfile = "";
@@ -473,9 +473,8 @@ class Scratch3PiSenseHatBlocks {
                 colours: ['off', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white'],
                 coords: ['0','1','2','3','4','5','6','7'],
                 rots: ['0', '90', '180', '270'],
-		stick: ['up arrow', 'down arrow', 'left arrow', 'right arrow', 'enter'],
-		moved: ['moved', 'shaken'],
-		tilt: ['forward', 'backward', 'left', 'right']
+                stick: ['up arrow', 'down arrow', 'left arrow', 'right arrow', 'enter'],
+                tilt: ['forward', 'backward', 'left', 'right']
             }
         };
     }
@@ -484,90 +483,96 @@ class Scratch3PiSenseHatBlocks {
     {
         if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
         {
-            var data = new Uint8Array (20);
-            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-pressure", "r");
+            let data = new Uint8Array (20);
+            const fd = fs.openSync ("/dev/shm/rpi-sense-emu-pressure", "r");
             fs.readSync (fd, data, 0, 20, 0);
             fs.closeSync (fd);
-            var view = new DataView (data.buffer, 0, 20);
+            const view = new DataView (data.buffer, 0, 20);
             return Number((view.getInt16 (16, true) / 480) + 37).toFixed (2);
         }
-        var data = this.IMU.getValueSync();
-        return Number (data.temperature).toFixed (2);
+        const data = this.IMU.getValueSync();
+        if (data)
+            return Number (data.temperature).toFixed (2);
     };
 
     get_press ()
     {
         if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
         {
-            var data = new Uint8Array (20);
-            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-pressure", "r");
+            let data = new Uint8Array (20);
+            const fd = fs.openSync ("/dev/shm/rpi-sense-emu-pressure", "r");
             fs.readSync (fd, data, 0, 20, 0);
             fs.closeSync (fd);
-            var view = new DataView (data.buffer, 0, 20);
+            const view = new DataView (data.buffer, 0, 20);
             return Number (view.getInt32 (12, true) / 4096).toFixed (2);
         }
-        var data = this.IMU.getValueSync();
-        return Number (data.pressure).toFixed (2);
+        const data = this.IMU.getValueSync();
+        if (data)
+            return Number (data.pressure).toFixed (2);
     };
 
     get_humid ()
     {
         if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
         {
-            var data = new Uint8Array (28);
-            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-humidity", "r");
+            let data = new Uint8Array (28);
+            const fd = fs.openSync ("/dev/shm/rpi-sense-emu-humidity", "r");
             fs.readSync (fd, data, 0, 28, 0);
             fs.closeSync (fd);
-            var view = new DataView (data.buffer, 0, 28);
+            const view = new DataView (data.buffer, 0, 28);
             return Number (view.getInt16 (22, true) / 256).toFixed (2);
         }
-        var data = this.IMU.getValueSync();
-        return Number (data.humidity).toFixed (2);
+        const data = this.IMU.getValueSync();
+        if (data)
+            return Number (data.humidity).toFixed (2);
     };
 
     get_ox ()
     {
         if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
         {
-            var data = new Uint8Array (56);
-            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
+            let data = new Uint8Array (56);
+            const fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
-            var view = new DataView (data.buffer, 0, 56);
+            const view = new DataView (data.buffer, 0, 56);
             return Number (view.getInt16 (50, true) * 360 / 32768).toFixed (2);
         }
-        var data = this.IMU.getValueSync();
-        return Number (data.fusionPose.x * 180 / Math.PI).toFixed (2);
+        const data = this.IMU.getValueSync();
+        if (data)
+            return Number (data.fusionPose.x * 180 / Math.PI).toFixed (2);
     };
 
     get_oy ()
     {
         if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
         {
-            var data = new Uint8Array (56);
-            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
+            let data = new Uint8Array (56);
+            const fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
-            var view = new DataView (data.buffer, 0, 56);
+            const view = new DataView (data.buffer, 0, 56);
             return Number (view.getInt16 (52, true) * 360 / 32768).toFixed (2);
         }
-        var data = this.IMU.getValueSync();
-        return Number (data.fusionPose.y * 180 / Math.PI).toFixed (2);
+        const data = this.IMU.getValueSync();
+        if (data)
+            return Number (data.fusionPose.y * 180 / Math.PI).toFixed (2);
     };
 
     get_oz ()
     {
         if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
         {
-            var data = new Uint8Array (56);
-            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
+            let data = new Uint8Array (56);
+            const fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
-            var view = new DataView (data.buffer, 0, 56);
+            const view = new DataView (data.buffer, 0, 56);
             return Number (view.getInt16 (54, true) * 360 / 32768).toFixed (2);
         }
-        var data = this.IMU.getValueSync();
-        return Number (data.fusionPose.z * 180 / Math.PI).toFixed (2);
+        const data = this.IMU.getValueSync();
+        if (data)
+            return Number (data.fusionPose.z * 180 / Math.PI).toFixed (2);
     };
 
     _map_colour (col)
@@ -585,18 +590,18 @@ class Scratch3PiSenseHatBlocks {
 
     _pixel (x, y, val)
     {
-        pix = new Uint8Array (2);
+        let pix = new Uint8Array (2);
         pix[0] = val / 256;
         pix[1] = val % 256;
-        pos = y * 8 + x;
-        fd = fs.openSync (this.fbfile, "r+");
+        const pos = y * 8 + x;
+        const fd = fs.openSync (this.fbfile, "r+");
         fs.writeSync (fd, pix, 0, 2, pos * 2);
         fs.closeSync (fd);
     }
 
     _pixel_remap (x, y, val)
     {
-        pix = new Uint8Array (2);
+        let pix = new Uint8Array (2);
         pix[0] = val / 256;
         pix[1] = val % 256;
         if (this._orient == 90)
@@ -607,57 +612,57 @@ class Scratch3PiSenseHatBlocks {
             pos = (7 - x) * 8 + y;
         else
             pos = y * 8 + x;
-        fd = fs.openSync (this.fbfile, "r+");
+        const fd = fs.openSync (this.fbfile, "r+");
         fs.writeSync (fd, pix, 0, 2, pos * 2);
         fs.closeSync (fd);
     }
 
     set_pixel (args)
     {
-        x = Cast.toNumber (args.X);
-        y = Cast.toNumber (args.Y);
+        const x = Cast.toNumber (args.X);
+        const y = Cast.toNumber (args.Y);
 
-        r = Cast.toNumber (args.R);
-        g = Cast.toNumber (args.G);
-        b = Cast.toNumber (args.B);
-        val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
+        const r = Cast.toNumber (args.R);
+        const g = Cast.toNumber (args.G);
+        const b = Cast.toNumber (args.B);
+        const val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
 
         this._pixel (x, y, val);
     }
 
     set_pixel_col (args)
     {
-        x = Cast.toNumber (args.X);
-        y = Cast.toNumber (args.Y);
+        const x = Cast.toNumber (args.X);
+        const y = Cast.toNumber (args.Y);
 
-        col = Cast.toString (args.COLOUR);
-        val = this._map_colour (col);
+        const col = Cast.toString (args.COLOUR);
+        const val = this._map_colour (col);
 
         this._pixel (x, y, val);
     }
 
     set_pixel_new (args)
     {
-        x = Cast.toNumber (args.X);
-        y = Cast.toNumber (args.Y);
+        const x = Cast.toNumber (args.X);
+        const y = Cast.toNumber (args.Y);
 
-        color = Cast.toRgbColorList (args.COLOUR);
-        val = (Math.trunc (color[2] / 32) * 1024) + (Math.trunc (color[0] / 32) * 32) + Math.trunc (color[1] / 32);
+        const colour = Cast.toRgbColorList (args.COLOUR);
+        const val = (Math.trunc (colour[2] / 32) * 1024) + (Math.trunc (colour[0] / 32) * 32) + Math.trunc (colour[1] / 32);
 
         this._pixel_remap (x, y, val);
     }
 
     _all_pixels (val)
     {
-        pix = new Uint8Array (128);
-        count = 0;
+        let pix = new Uint8Array (128);
+        let count = 0;
         while (count < 64)
         {
             pix[count * 2] = val / 256;
             pix[count * 2 + 1] = val % 256;
             count++;
         }
-        fd = fs.openSync (this.fbfile, "r+");
+        const fd = fs.openSync (this.fbfile, "r+");
         fs.writeSync (fd, pix, 0, 128, 0);
         fs.closeSync (fd);
     }
@@ -669,58 +674,59 @@ class Scratch3PiSenseHatBlocks {
 
     set_all_pixels (args)
     {
-        r = Cast.toNumber (args.R);
-        g = Cast.toNumber (args.G);
-        b = Cast.toNumber (args.B);
-        val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
+        const r = Cast.toNumber (args.R);
+        const g = Cast.toNumber (args.G);
+        const b = Cast.toNumber (args.B);
+        const val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
 
         this._all_pixels (val);
     }
 
     set_all_pixels_new (args)
     {
-        color = Cast.toRgbColorList (args.COLOUR);
-        val = (Math.trunc (color[2] / 32) * 1024) + (Math.trunc (color[0] / 32) * 32) + Math.trunc (color[1] / 32);
+        const colour = Cast.toRgbColorList (args.COLOUR);
+        const val = (Math.trunc (colour[2] / 32) * 1024) + (Math.trunc (colour[0] / 32) * 32) + Math.trunc (colour[1] / 32);
 
         this._all_pixels (val);
     }
 
     set_all_pixels_col (args)
     {
-        col = Cast.toString(args.COLOUR);
-        val = this._map_colour (col);
+        const col = Cast.toString(args.COLOUR);
+        const val = this._map_colour (col);
 
         this._all_pixels (val);
     }
 
     set_all_pixels_fg (args)
     {
-        val = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
+        const val = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
 
         this._all_pixels (val);
     }
 
     set_fg (args)
     {
-        color = Cast.toRgbColorList(args.COLOUR);
-        this._fg[0] = color[0];
-        this._fg[1] = color[1];
-        this._fg[2] = color[2];
+        const colour = Cast.toRgbColorList(args.COLOUR);
+        this._fg[0] = colour[0];
+        this._fg[1] = colour[1];
+        this._fg[2] = colour[2];
     }
 
     set_bg (args)
     {
-        color = Cast.toRgbColorList(args.COLOUR);
-        this._bg[0] = color[0];
-        this._bg[1] = color[1];
-        this._bg[2] = color[2];
-        val = (Math.trunc (this._bg[2] / 32) * 1024) + (Math.trunc (this._bg[0] / 32) * 32) + Math.trunc (this._bg[1] / 32);
+        const colour = Cast.toRgbColorList(args.COLOUR);
+        this._bg[0] = colour[0];
+        this._bg[1] = colour[1];
+        this._bg[2] = colour[2];
+        const val = (Math.trunc (this._bg[2] / 32) * 1024) + (Math.trunc (this._bg[0] / 32) * 32) + Math.trunc (this._bg[1] / 32);
+
         this._all_pixels (val)
     }
 
     set_orient (args)
     {
-        orient = Cast.toNumber(args.ROT);
+        const orient = Cast.toNumber(args.ROT);
         this._orient = orient;
     }
 
@@ -728,8 +734,8 @@ class Scratch3PiSenseHatBlocks {
     {
         if (orient == 0)
         {
-            x = pos % 8;
-            y = (pos - x) / 8;
+            let x = pos % 8;
+            let y = (pos - x) / 8;
             if (x > 4) return 40;
             else return ((x * 1) + 1) * 8 - 1 - (y * 1);
         }
@@ -740,8 +746,8 @@ class Scratch3PiSenseHatBlocks {
         }
         else if (orient == 180)
         {
-            x = pos % 8;
-            y = (pos - x) / 8;
+            let x = pos % 8;
+            let y = (pos - x) / 8;
             if (x < 3) return 40;
             else return (7 - (x * 1)) * 8 + (y * 1);
         }
@@ -756,10 +762,10 @@ class Scratch3PiSenseHatBlocks {
     _load_letter (lett)
     {
         const dict = " +-*/!\"#$><0123456789.=)(ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz?,;:|@%[&_']\\~"
-        lgr = new Uint8Array (80);
-        inv = 90 - dict.indexOf (lett);
+        let lgr = new Uint8Array (80);
+        let inv = 90 - dict.indexOf (lett);
         if (inv > 90) inv = 90;
-        fd = fs.openSync ('/usr/lib/scratch3/sense_hat_text.bmp', 'r');
+        const fd = fs.openSync ('/usr/lib/scratch3/sense_hat_text.bmp', 'r');
         for (count = 0; count < 5; count++)
             fs.readSync (fd, lgr, count * 16, 16, 3098 + inv * 80 + (64 - count * 16));
         fs.closeSync (fd);
@@ -768,27 +774,27 @@ class Scratch3PiSenseHatBlocks {
 
     _letter (lett, orient, valf, valb)
     {
-        pix = new Uint8Array (128);
-        lgr = this._load_letter (lett);
+        let pix = new Uint8Array (128);
+        const lgr = this._load_letter (lett);
         for (count = 0; count < 64; count++)
         {
-            map = this._map_orient (count, orient);
+            const map = this._map_orient (count, orient);
             if (map == 40) val = valb;
             else if (lgr[map * 2] == 0xFF) val = valf;
             else val = valb;
             pix[count * 2] = val / 256;
             pix[count * 2 + 1] = val % 256;
         }
-        fd = fs.openSync (this.fbfile, "r+");
+        const fd = fs.openSync (this.fbfile, "r+");
         fs.writeSync (fd, pix, 0, 128, 0);
         fs.closeSync (fd);
     };
 
     show_letter_glob (args)
     {
-        lett = Cast.toString(args.LETTER);
-        valf = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
-        valb = (Math.trunc (this._bg[2] / 32) * 1024) + (Math.trunc (this._bg[0] / 32) * 32) + Math.trunc (this._bg[1] / 32);
+        const lett = Cast.toString(args.LETTER);
+        const valf = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
+        const valb = (Math.trunc (this._bg[2] / 32) * 1024) + (Math.trunc (this._bg[0] / 32) * 32) + Math.trunc (this._bg[1] / 32);
 
         if (lett.length != 1) return;
         this._letter (lett, this._orient, valf, valb);
@@ -796,12 +802,12 @@ class Scratch3PiSenseHatBlocks {
 
     show_letter (args)
     {
-        lett = Cast.toString(args.LETTER);
-        orient = Cast.toNumber(args.ROT);
-        colour = Cast.toString(args.COLOUR);
-        bg = Cast.toString(args.BCOLOUR);
-        valf = this._map_colour (colour);
-        valb = this._map_colour (bg);
+        const lett = Cast.toString(args.LETTER);
+        const orient = Cast.toNumber(args.ROT);
+        const colour = Cast.toString(args.COLOUR);
+        const bg = Cast.toString(args.BCOLOUR);
+        const valf = this._map_colour (colour);
+        const valb = this._map_colour (bg);
 
         if (lett.length != 1) return;
         this._letter (lett, orient, valf, valb);
@@ -809,14 +815,13 @@ class Scratch3PiSenseHatBlocks {
 
     _message (message, orient, valf, valb)
     {
-        pix = new Uint8Array (128);
-        char_ind = 0;
-        lett_ind = 0;
-        //msg = String (message);
-        pix0 = valf / 256;
-        pix1 = valf % 256;
-        bg0 = valb / 256;
-        bg1 = valb % 256;
+        let pix = new Uint8Array (128);
+        let char_ind = 0;
+        let lett_ind = 0;
+        const pix0 = valf / 256;
+        const pix1 = valf % 256;
+        const bg0 = valb / 256;
+        const bg1 = valb % 256;
 
         // clear the grid to off and output
         for (pel = 0; pel < 64; pel++)
@@ -824,13 +829,13 @@ class Scratch3PiSenseHatBlocks {
             pix[pel*2] = bg0;
             pix[pel*2 + 1] = bg1;
         }
-        fd = fs.openSync (this.fbfile, "r+");
+        const fd = fs.openSync (this.fbfile, "r+");
         fs.writeSync (fd, pix, 0, 128, 0);
         fs.closeSync (fd);
 
         for (lett_ind = 0; lett_ind < message.length + 2; lett_ind++)
         {
-            lgrid = this._load_letter (message[lett_ind]);
+            const lgrid = this._load_letter (message[lett_ind]);
             for (char_ind = 0; char_ind < 6; char_ind++)
             {
                 // scroll the grid
@@ -943,12 +948,12 @@ class Scratch3PiSenseHatBlocks {
                 }
 
                 // output the buffer
-                fd = fs.openSync (this.fbfile, "r+");
+                const fd = fs.openSync (this.fbfile, "r+");
                 fs.writeSync (fd, pix, 0, 128, 0);
                 fs.closeSync (fd);
 
                 // pause for a bit
-                start = new Date().getTime();
+                const start = new Date().getTime();
                 for (i = 0; i < 1e7; i++)
                 {
                     if ((new Date().getTime() - start) > 100) break;
@@ -959,21 +964,21 @@ class Scratch3PiSenseHatBlocks {
 
     scroll_message_glob (args)
     {
-        message = Cast.toString (args.MESSAGE);
-        valf = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
-        valb = (Math.trunc (this._bg[2] / 32) * 1024) + (Math.trunc (this._bg[0] / 32) * 32) + Math.trunc (this._bg[1] / 32);
+        const message = Cast.toString (args.MESSAGE);
+        const valf = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
+        const valb = (Math.trunc (this._bg[2] / 32) * 1024) + (Math.trunc (this._bg[0] / 32) * 32) + Math.trunc (this._bg[1] / 32);
 
         this._message (message, this._orient, valf, valb);
     }
 
     scroll_message (args)
     {
-        message = Cast.toString (args.MESSAGE);
-        orient = Cast.toNumber (args.ROT);
-        colour = Cast.toString (args.COLOUR);
-        bg = Cast.toString (args.BCOLOUR);
-        valf = this._map_colour (colour);
-        valb = this._map_colour (bg);
+        const message = Cast.toString (args.MESSAGE);
+        const orient = Cast.toNumber (args.ROT);
+        const colour = Cast.toString (args.COLOUR);
+        const bg = Cast.toString (args.BCOLOUR);
+        const valf = this._map_colour (colour);
+        const valb = this._map_colour (bg);
 
         this._message (message, orient, valf, valb);
     }
@@ -990,43 +995,43 @@ class Scratch3PiSenseHatBlocks {
 
     _unlock_move (obj)
     {
-	obj._moved = 0;
+        obj._moved = 0;
     }
 
     when_moved ()
     {
         if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
         {
-            var data = new Uint8Array (56);
-            var fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
+            let data = new Uint8Array (56);
+            const fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
-            var view = new DataView (data.buffer, 0, 56);
+            const view = new DataView (data.buffer, 0, 56);
             x = Number (view.getInt16 (32, true) * 16 / 32768);
             y = Number (view.getInt16 (34, true) * 16 / 32768);
             z = Number (view.getInt16 (36, true) * 16 / 32768);
         }
-	else
-	{
-	    var data = this.IMU.getValueSync ();
-	    if (data)
-	    {
-		x = Number (data.accel.x);
-		y = Number (data.accel.y);
-		z = Number (data.accel.z);
-	    }
-	}
-	if (this._moved == 0)
-	{
-	    targ = 1.6;
-	    if (x > targ || x < (-1 * targ) || y > targ || y < (-1 * targ) || z > targ || z < (-1 * targ))
-	    {
-		this._moved = 1;
-		setTimeout (this._unlock_move, 500, this);
-		return true;
-	    }
-	}
-	return false;
+        else
+        {
+            const data = this.IMU.getValueSync ();
+            if (data)
+            {
+                x = Number (data.accel.x);
+                y = Number (data.accel.y);
+                z = Number (data.accel.z);
+            }
+        }
+        if (this._moved == 0)
+        {
+            const targ = 1.6;
+            if (x > targ || x < (-1 * targ) || y > targ || y < (-1 * targ) || z > targ || z < (-1 * targ))
+            {
+                this._moved = 1;
+                setTimeout (this._unlock_move, 500, this);
+                return true;
+            }
+        }
+        return false;
     }
 
     when_tilted (args)
