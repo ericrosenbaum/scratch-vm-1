@@ -48,6 +48,9 @@ class Scratch3PiSenseHatBlocks {
         // movement timeout
         this._moved = 0;
 
+        // tilt triggered
+        this._tilted = 0;
+
         // find the framebuffer on the SenseHAT
         this.fbfile = "";
         var fbtest = 0;
@@ -1007,18 +1010,18 @@ class Scratch3PiSenseHatBlocks {
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
             const view = new DataView (data.buffer, 0, 56);
-            x = Number (view.getInt16 (32, true) * 16 / 32768);
-            y = Number (view.getInt16 (34, true) * 16 / 32768);
-            z = Number (view.getInt16 (36, true) * 16 / 32768);
+            const x = Number (view.getInt16 (32, true) * 16 / 32768);
+            const y = Number (view.getInt16 (34, true) * 16 / 32768);
+            const z = Number (view.getInt16 (36, true) * 16 / 32768);
         }
         else
         {
             const data = this.IMU.getValueSync ();
             if (data)
             {
-                x = Number (data.accel.x);
-                y = Number (data.accel.y);
-                z = Number (data.accel.z);
+                const x = Number (data.accel.x);
+                const y = Number (data.accel.y);
+                const z = Number (data.accel.z);
             }
         }
         if (this._moved == 0)
@@ -1036,8 +1039,50 @@ class Scratch3PiSenseHatBlocks {
 
     when_tilted (args)
     {
-        tilt = Cast.toString (args.TILT);
+        const tilt = Cast.toString (args.TILT);
 
+        let x = 0;
+        let y = 0;
+        if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
+        {
+            let data = new Uint8Array (56);
+            const fd = fs.openSync ("/dev/shm/rpi-sense-emu-imu", "r");
+            fs.readSync (fd, data, 0, 56, 0);
+            fs.closeSync (fd);
+            const view = new DataView (data.buffer, 0, 56);
+            x = view.getInt16 (50, true) * 360 / 32768;
+            y = view.getInt16 (52, true) * 360 / 32768;
+        }
+        else
+        {
+            const data = this.IMU.getValueSync();
+            if (data)
+            {
+                x = Number (data.fusionPose.x * 180 / Math.PI);
+                y = Number (data.fusionPose.y * 180 / Math.PI);
+            }
+        }
+
+        let dir = 0;
+        if (tilt === "forward") dir = 1;
+        else if (tilt === "right") dir = 2;
+        else if (tilt === "backward") dir = 3;
+        else if (tilt === "left") dir = 4;
+
+        if (this._orient == 90) dir += 1;
+        else if (this._orient == 180) dir += 2;
+        else if (this._orient == 270) dir += 3;
+        if (dir > 4) dir -= 4;
+
+        const oldtilt = this._tilted;
+        if (dir == 1 && x < -15 && x > -90 && this._tilted != 1) this._tilted = 1;
+        if (dir == 2 && y < -15 && y > -90 && this._tilted != 2) this._tilted = 2;
+        if (dir == 3 && x > 15 && x < 90 && this._tilted != 3) this._tilted = 3;
+        if (dir == 4 && y > 15 && y < 90 && this._tilted != 4) this._tilted = 4;
+        if (x > -15 && x < 15 && y > -15 && y < 15 && this._tilted != 0) this._tilted = 0;
+
+        if (this._tilted != oldtilt && this._tilted != 0) return true;
+        else return false;
     }
 }
 
