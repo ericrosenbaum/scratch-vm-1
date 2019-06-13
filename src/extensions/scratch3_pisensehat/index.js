@@ -476,7 +476,7 @@ class Scratch3PiSenseHatBlocks {
                 colours: ['off', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white'],
                 coords: ['0','1','2','3','4','5','6','7'],
                 rots: ['0', '90', '180', '270'],
-                stick: ['up arrow', 'down arrow', 'left arrow', 'right arrow', 'enter'],
+                stick: [{text:'up', value:'up arrow'}, {text:'down', value:'down arrow'}, {text:'left', value:'left arrow'}, {text:'right', value:'right arrow'}, {text:'centre', value:'enter'}],
                 tilt: ['forward', 'backward', 'left', 'right']
             }
         };
