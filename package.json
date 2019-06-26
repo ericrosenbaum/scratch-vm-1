@@ -43,7 +43,8 @@
     "name": "Massachusetts Institute of Technology"
   },
   "browser": {
-    "fs": false
+    "fs": false,
+    "child_process": false
   },
   "bugs": {
     "url": "https://github.com/LLK/scratch-vm/issues"
