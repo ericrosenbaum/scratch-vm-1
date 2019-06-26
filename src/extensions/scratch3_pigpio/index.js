@@ -49,7 +49,7 @@ class Scratch3PiGPIOBlocks {
             name: Scratch3PiGPIOBlocks.EXTENSION_NAME,
             blockIconURI: blockIconURI,
             blocks: [
-                {
+/*                {
                     opcode: 'when_active',
                     text: formatMessage({
                         id: 'pigpio.when_active',
@@ -170,13 +170,55 @@ class Scratch3PiGPIOBlocks {
                         }
                     }
                 },
-                '---',
+                '---',*/
+                {
+                    opcode: 'when_gpio',
+                    text: formatMessage({
+                        id: 'pigpio.when_gpio',
+                        default: 'when gpio [GPIO] is [HILO]',
+                        description: 'when the gpio is in the specified state'
+                    }),
+                    blockType: BlockType.HAT,
+                    arguments: {
+                        GPIO: {
+                            type: ArgumentType.STRING,
+                            menu: 'gpios',
+                            defaultValue: '0'
+                        },
+                        HILO: {
+                            type: ArgumentType.STRING,
+                            menu: 'hilo',
+                            defaultValue: 'high'
+                        }
+                    }
+                },
+                {
+                    opcode: 'get_gpio',
+                    text: formatMessage({
+                        id: 'pigpio.get_gpio',
+                        default: 'gpio [GPIO] is [HILO] ?',
+                        description: 'is the gpio in the specified state?'
+                    }),
+                    blockType: BlockType.BOOLEAN,
+                    arguments: {
+                        GPIO: {
+                            type: ArgumentType.STRING,
+                            menu: 'gpios',
+                            defaultValue: '0'
+                        },
+                        HILO: {
+                            type: ArgumentType.STRING,
+                            menu: 'hilo',
+                            defaultValue: 'high'
+                        }
+                    }
+                },
                 {
                     opcode: 'set_gpio',
                     text: formatMessage({
                         id: 'pigpio.set_gpio',
-                        default: 'set gpio [GPIO] to [OUTPUT]',
-                        description: 'set gpio to value'
+                        default: 'set gpio [GPIO] to output [HILO]',
+                        description: 'set the gpio as output to the specified state'
                     }),
                     blockType: BlockType.COMMAND,
                     arguments: {
@@ -185,65 +227,113 @@ class Scratch3PiGPIOBlocks {
                             menu: 'gpios',
                             defaultValue: '0'
                         },
-                        OUTPUT: {
+                        HILO: {
                             type: ArgumentType.STRING,
-                            menu: 'outputs',
-                            defaultValue: 'input'
+                            menu: 'hilo',
+                            defaultValue: 'high'
                         }
                     }
                 },
                 {
-                    opcode: 'get_gpio',
+                    opcode: 'set_pull',
                     text: formatMessage({
-                        id: 'pigpio.get_gpio',
-                        default: 'gpio [GPIO] is high?',
-                        description: 'is the selected gpio high?'
+                        id: 'pigpio.set_pull',
+                        default: 'set gpio [GPIO] to input pulled [PULL]',
+                        description: 'set the gpio as input pulled up or down'
                     }),
-                    blockType: BlockType.BOOLEAN,
+                    blockType: BlockType.COMMAND,
                     arguments: {
                         GPIO: {
                             type: ArgumentType.STRING,
                             menu: 'gpios',
                             defaultValue: '0'
+                        },
+                        PULL: {
+                            type: ArgumentType.STRING,
+                            menu: 'pull',
+                            defaultValue: 'up'
                         }
                     }
-                }
+                },
             ],
             menus: {
-                outputs: ['output high', 'output low', 'input'],
+                /*outputs: ['output high', 'output low', 'input'],*/
                 gpios: ['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27'],
-                active: ['active', 'inactive'],
-                onoff: ['on', 'off'],
-                pull: ['pull up', 'pull down']
+                /*active: ['active', 'inactive'],*/
+                /*onoff: ['on', 'off'],*/
+                pull: ['up', 'down'],
+                hilo: ['high', 'low'],
             }
         };
     }
 
-    set_gpio (args) 
-    {
-        const pin = Cast.toNumber(args.GPIO);
-        const val = Cast.toString(args.OUTPUT);
-
-        let command = 'raspi-gpio set ' + pin + ' ip pn';
-        if (val === 'output high')
-            command = 'raspi-gpio set ' + pin + ' op pn dh';
-        else if (val === 'output low')
-            command =  'raspi-gpio set ' + pin + ' op pn dl';
-
-        cp.execSync (command);
-    }
-
-    get_gpio (args)
+    when_gpio (args)
     {
         const pin = Cast.toString (args.GPIO);
+        const val = Cast.toString (args.HILO);
 
         const command = 'raspi-gpio get ' + pin
         const result = cp.execSync (command).toString();
         const elements = result.split (' ');
 
-        if (elements[2].includes ('1')) return true;
-        else return false;
+        if (elements[2].includes ('1'))
+        {
+            if (val == 'high') return true;
+            else return false;
+        }
+        else
+        {
+            if (val == 'low') return true;
+            else return false;
+        }
     }
+
+    get_gpio (args)
+    {
+        const pin = Cast.toString (args.GPIO);
+        const val = Cast.toString (args.HILO);
+
+        const command = 'raspi-gpio get ' + pin
+        const result = cp.execSync (command).toString();
+        const elements = result.split (' ');
+
+        if (elements[2].includes ('1'))
+        {
+            if (val == 'high') return true;
+            else return false;
+        }
+        else
+        {
+            if (val == 'low') return true;
+            else return false;
+        }
+    }
+
+    set_gpio (args)
+    {
+        const pin = Cast.toString (args.GPIO);
+        const val = Cast.toString (args.HILO);
+
+        let op = 'dh';
+        if (val == 'low') op = 'dl';
+
+        const command = 'raspi-gpio set ' + pin + ' op pn ' + op;
+        cp.execSync (command);
+    }
+
+    set_pull (args)
+    {
+        const pin = Cast.toString (args.GPIO);
+        const val = Cast.toString (args.PULL);
+
+        let op = 'pu';
+        if (val == 'down') op = 'pd';
+
+        const command = 'raspi-gpio set ' + pin + ' ip ' + op;
+        cp.execSync (command);
+    }
+
+    /* not used below... */
 
     set_output (args)
     {
@@ -291,7 +381,7 @@ class Scratch3PiGPIOBlocks {
             if (elements[2].includes ('0')) return act;
             else return !act;
         }
-	return false;
+        return false;
     }
 
     when_active (args)
@@ -316,7 +406,7 @@ class Scratch3PiGPIOBlocks {
             if (elements[2].includes ('0')) return act;
             else return !act;
         }
-	return false;
+        return false;
     }
 
     toggle_output (args)
