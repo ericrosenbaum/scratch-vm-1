@@ -204,7 +204,7 @@ class Scratch3PiSenseHatBlocks {
                     opcode: 'when_joystick',
                     text: formatMessage({
                         id: 'pisensehat.when_joystick',
-                        default: 'when joystick [STICK] pushed',
+                        default: 'when joystick pushed [STICK]',
                         description: 'when the joystick is pushed'
                     }),
                     blockType: BlockType.HAT,
@@ -220,7 +220,7 @@ class Scratch3PiSenseHatBlocks {
                     opcode: 'joystick_pushed',
                     text: formatMessage({
                         id: 'pisensehat.joystick_pushed',
-                        default: 'joystick [STICK] is pushed?',
+                        default: 'joystick pushed [STICK] ?',
                         description: 'is the joystick pushed?'
                     }),
                     blockType: BlockType.BOOLEAN,
