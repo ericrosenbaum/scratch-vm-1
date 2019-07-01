@@ -93,10 +93,49 @@ class Scratch3PiSenseHatBlocks {
             blockIconURI: blockIconURI,
             blocks: [
                 {
+                    opcode: 'scroll_message_glob',
+                    text: formatMessage({
+                        id: 'pisensehat.scroll_message_glob',
+                        default: 'display text [MESSAGE]',
+                        description: 'scroll message across in foreground colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        MESSAGE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'Hello!'
+                        }
+                    }
+                },
+                {
+                    opcode: 'show_letter_glob',
+                    text: formatMessage({
+                        id: 'pisensehat.show_letter_glob',
+                        default: 'display character [LETTER]',
+                        description: 'show letter in foreground colour'
+                    }),
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        LETTER: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'A'
+                        },
+                    }
+                },
+                {
+                    opcode: 'all_off',
+                    text: formatMessage({
+                        id: 'pisensehat.all_off',
+                        default: 'clear display',
+                        description: 'turn off all LEDs'
+                    }),
+                    blockType: BlockType.COMMAND
+                },
+                {
                     opcode: 'set_fg',
                     text: formatMessage({
                         id: 'pisensehat.set_fg',
-                        default: 'set colour to [COLOUR]',
+                        default: 'set text colour to [COLOUR]',
                         description: 'set foreground colour from colour picker'
                     }),
                     blockType: BlockType.COMMAND,
@@ -157,45 +196,6 @@ class Scratch3PiSenseHatBlocks {
                             type: ArgumentType.STRING,
                             menu: 'rots',
                             defaultValue: '0'
-                        }
-                    }
-                },
-                {
-                    opcode: 'all_off',
-                    text: formatMessage({
-                        id: 'pisensehat.all_off',
-                        default: 'clear display',
-                        description: 'turn off all LEDs'
-                    }),
-                    blockType: BlockType.COMMAND
-                },
-                {
-                    opcode: 'show_letter_glob',
-                    text: formatMessage({
-                        id: 'pisensehat.show_letter_glob',
-                        default: 'display character [LETTER]',
-                        description: 'show letter in foreground colour'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        LETTER: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'A'
-                        },
-                    }
-                },
-                {
-                    opcode: 'scroll_message_glob',
-                    text: formatMessage({
-                        id: 'pisensehat.scroll_message_glob',
-                        default: 'display text [MESSAGE]',
-                        description: 'scroll message across in foreground colour'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        MESSAGE: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'Hello!'
                         }
                     }
                 },
@@ -652,7 +652,7 @@ class Scratch3PiSenseHatBlocks {
         const colour = Cast.toRgbColorList (args.COLOUR);
         const val = (Math.trunc (colour[2] / 32) * 1024) + (Math.trunc (colour[0] / 32) * 32) + Math.trunc (colour[1] / 32);
 
-        this._pixel_remap (x, y, val);
+        if (x >= 0 && x <= 7 && y >= 0 && y <= 7) this._pixel_remap (x, y, val);
     }
 
     _all_pixels (val)
@@ -739,38 +739,38 @@ class Scratch3PiSenseHatBlocks {
         {
             let x = pos % 8;
             let y = (pos - x) / 8;
-            if (x > 4) return 40;
+            if (x > 5) return 48;
             else return ((x * 1) + 1) * 8 - 1 - (y * 1);
         }
         else if (orient == 90)
         {
-            if (pos < 40) return pos;
-            else return 40;
+            if (pos < 48) return pos;
+            else return 48;
         }
         else if (orient == 180)
         {
             let x = pos % 8;
             let y = (pos - x) / 8;
-            if (x < 3) return 40;
+            if (x < 2) return 48;
             else return (7 - (x * 1)) * 8 + (y * 1);
         }
         else if (orient == 270)
         {
-            if (pos > 24) return 63 - pos;
-            else return 40;
+            if (pos > 16) return 63 - pos;
+            else return 48;
         }
-        return 40;
+        return 48;
     }
 
     _load_letter (lett)
     {
         const dict = " +-*/!\"#$><0123456789.=)(ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz?,;:|@%[&_']\\~"
-        let lgr = new Uint8Array (80);
+        let lgr = new Uint8Array (100);
         let inv = 90 - dict.indexOf (lett);
         if (inv > 90) inv = 90;
         const fd = fs.openSync ('/usr/lib/scratch3/sense_hat_text.bmp', 'r');
         for (count = 0; count < 5; count++)
-            fs.readSync (fd, lgr, count * 16, 16, 3098 + inv * 80 + (64 - count * 16));
+            fs.readSync (fd, lgr, (count + 1) * 16, 16, 3098 + inv * 80 + (64 - count * 16));
         fs.closeSync (fd);
         return lgr;
     }
@@ -782,7 +782,7 @@ class Scratch3PiSenseHatBlocks {
         for (count = 0; count < 64; count++)
         {
             const map = this._map_orient (count, orient);
-            if (map == 40) val = valb;
+            if (map == 48) val = valb;
             else if (lgr[map * 2] == 0xFF) val = valf;
             else val = valb;
             pix[count * 2] = val / 256;
