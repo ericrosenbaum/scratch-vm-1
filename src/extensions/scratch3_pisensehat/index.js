@@ -49,7 +49,8 @@ class Scratch3PiSenseHatBlocks {
         this._moved = 0;
 
         // tilt triggered
-        this._tilted = 0;
+        this._xtilt = 0;
+        this._ytilt = 0;
 
         // find the framebuffer on the SenseHAT
         this.fbfile = "";
@@ -1002,9 +1003,9 @@ class Scratch3PiSenseHatBlocks {
 
     when_moved ()
     {
-	let x = 0;
-	let y = 0;
-	let z = 0;
+        let x = 0;
+        let y = 0;
+        let z = 0;
         if (this.fbfile == "/dev/shm/rpi-sense-emu-screen")
         {
             let data = new Uint8Array (56);
@@ -1025,6 +1026,7 @@ class Scratch3PiSenseHatBlocks {
                 y = Number (data.accel.y);
                 z = Number (data.accel.z);
             }
+            else return false;
         }
         if (this._moved == 0)
         {
@@ -1063,6 +1065,7 @@ class Scratch3PiSenseHatBlocks {
                 x = Number (data.fusionPose.x * 180 / Math.PI);
                 y = Number (data.fusionPose.y * 180 / Math.PI);
             }
+            else return false;
         }
 
         let dir = 0;
@@ -1076,16 +1079,36 @@ class Scratch3PiSenseHatBlocks {
         else if (this._orient == 270) dir += 3;
         if (dir > 4) dir -= 4;
 
-        const oldtilt = this._tilted;
-        if (dir == 1 && x < -15 && x > -90 && this._tilted != 1) this._tilted = 1;
-        if (dir == 2 && y < -15 && y > -90 && this._tilted != 2) this._tilted = 2;
-        if (dir == 3 && x > 15 && x < 90 && this._tilted != 3) this._tilted = 3;
-        if (dir == 4 && y > 15 && y < 90 && this._tilted != 4) this._tilted = 4;
-        if (x > -15 && x < 15 && y > -15 && y < 15 && this._tilted != 0) this._tilted = 0;
+        let x_tilt = 0;
+        if (x < -15 && x > -90) x_tilt = 1;
+        if (x > 15 && x < 90) x_tilt = -1;
 
-        if (this._tilted != oldtilt && this._tilted != 0) return true;
-        else return false;
-    }
+        let y_tilt = 0;
+        if (y < -15 && y > -90) y_tilt = 1;
+        if (y > 15 && y < 90) y_tilt = -1;
+
+        if (this._xtilt != x_tilt)
+        {
+            if ((dir == 1 && x_tilt == 1) || (dir == 3 && x_tilt == -1))
+            {
+                this._xtilt = x_tilt;
+                return true;
+            }
+            if (x_tilt == 0) this._xtilt = x_tilt;
+        }
+
+        if (this._ytilt != y_tilt)
+        {
+            if ((dir == 2 && y_tilt == 1) || (dir == 4 && y_tilt == -1))
+            {
+                this._ytilt = y_tilt;
+                return true;
+            }
+            if (y_tilt == 0) this._ytilt = y_tilt;
+        }
+
+        return false;
+     }
 }
 
 module.exports = Scratch3PiSenseHatBlocks;
