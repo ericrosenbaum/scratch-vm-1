@@ -3,6 +3,7 @@ const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const Cast = require('../../util/cast');
 const fs = window.require('fs');
+const cp = window.require('child_process');
 var nodeimu = require("nodeimu");
 
 /**
@@ -72,12 +73,9 @@ class Scratch3PiSenseHatBlocks {
             else
             {
                 // fall back to the emulator if possible
-                if (fs.existsSync ("/dev/shm/rpi-sense-emu-screen"))
-                {
-                    this.fbfile = "/dev/shm/rpi-sense-emu-screen";
-                    break;
-                }
-                else break;
+                cp.spawn ("sense_emu_gui");
+                this.fbfile = "/dev/shm/rpi-sense-emu-screen";
+                break;
             }
             fbtest++;
         }
@@ -540,11 +538,11 @@ class Scratch3PiSenseHatBlocks {
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
             const view = new DataView (data.buffer, 0, 56);
-            return Number (view.getUint16 (50, true) * 360 / 32768).toFixed (2);
+            return Number (view.getInt16 (50, true) >= 0 ? view.getInt16 (50, true) * 360 / 32768 : 360 + (view.getInt16 (50, true) * 360 / 32768)).toFixed (2);
         }
         const data = this.IMU.getValueSync();
         if (data)
-            return Number (data.fusionPose.x > 0 ? data.fusionPose.x * 180 / Math.PI : 360 + data.fusionPose.x * 180 / Math.PI).toFixed (2);
+            return Number (data.fusionPose.x >= 0 ? data.fusionPose.x * 180 / Math.PI : 360 + data.fusionPose.x * 180 / Math.PI).toFixed (2);
     };
 
     get_oy ()
@@ -556,11 +554,11 @@ class Scratch3PiSenseHatBlocks {
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
             const view = new DataView (data.buffer, 0, 56);
-            return Number (view.getUint16 (52, true) * 360 / 32768).toFixed (2);
+            return Number (view.getInt16 (52, true) >= 0 ? view.getInt16 (52, true) * 360 / 32768 : 360 + (view.getInt16 (52, true) * 360 / 32768)).toFixed (2);
         }
         const data = this.IMU.getValueSync();
         if (data)
-            return Number (data.fusionPose.y > 0 ? data.fusionPose.y * 180 / Math.PI : 360 + data.fusionPose.y * 180 / Math.PI).toFixed (2);
+            return Number (data.fusionPose.y >= 0 ? data.fusionPose.y * 180 / Math.PI : 360 + data.fusionPose.y * 180 / Math.PI).toFixed (2);
     };
 
     get_oz ()
@@ -572,11 +570,11 @@ class Scratch3PiSenseHatBlocks {
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
             const view = new DataView (data.buffer, 0, 56);
-            return Number (view.getUint16 (54, true) * 360 / 32768).toFixed (2);
+            return Number (view.getInt16 (54, true) >= 0 ? view.getInt16 (54, true) * 360 / 32768 : 360 + (view.getInt16 (54, true) * 360 / 32768)).toFixed (2);
         }
         const data = this.IMU.getValueSync();
         if (data)
-            return Number (data.fusionPose.z > 0 ? data.fusionPose.z * 180 / Math.PI : 360 + data.fusionPose.z * 180 / Math.PI).toFixed (2);
+            return Number (data.fusionPose.z >= 0 ? data.fusionPose.z * 180 / Math.PI : 360 + data.fusionPose.z * 180 / Math.PI).toFixed (2);
     };
 
     _map_colour (col)
