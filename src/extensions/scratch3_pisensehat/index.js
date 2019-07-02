@@ -136,7 +136,7 @@ class Scratch3PiSenseHatBlocks {
                     opcode: 'set_fg',
                     text: formatMessage({
                         id: 'pisensehat.set_fg',
-                        default: 'set text colour to [COLOUR]',
+                        default: 'set colour to [COLOUR]',
                         description: 'set foreground colour from colour picker'
                     }),
                     blockType: BlockType.COMMAND,
@@ -540,11 +540,11 @@ class Scratch3PiSenseHatBlocks {
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
             const view = new DataView (data.buffer, 0, 56);
-            return Number (view.getInt16 (50, true) * 360 / 32768).toFixed (2);
+            return Number (view.getUint16 (50, true) * 360 / 32768).toFixed (2);
         }
         const data = this.IMU.getValueSync();
         if (data)
-            return Number (data.fusionPose.x * 180 / Math.PI).toFixed (2);
+            return Number (data.fusionPose.x > 0 ? data.fusionPose.x * 180 / Math.PI : 360 + data.fusionPose.x * 180 / Math.PI).toFixed (2);
     };
 
     get_oy ()
@@ -556,11 +556,11 @@ class Scratch3PiSenseHatBlocks {
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
             const view = new DataView (data.buffer, 0, 56);
-            return Number (view.getInt16 (52, true) * 360 / 32768).toFixed (2);
+            return Number (view.getUint16 (52, true) * 360 / 32768).toFixed (2);
         }
         const data = this.IMU.getValueSync();
         if (data)
-            return Number (data.fusionPose.y * 180 / Math.PI).toFixed (2);
+            return Number (data.fusionPose.y > 0 ? data.fusionPose.y * 180 / Math.PI : 360 + data.fusionPose.y * 180 / Math.PI).toFixed (2);
     };
 
     get_oz ()
@@ -572,11 +572,11 @@ class Scratch3PiSenseHatBlocks {
             fs.readSync (fd, data, 0, 56, 0);
             fs.closeSync (fd);
             const view = new DataView (data.buffer, 0, 56);
-            return Number (view.getInt16 (54, true) * 360 / 32768).toFixed (2);
+            return Number (view.getUint16 (54, true) * 360 / 32768).toFixed (2);
         }
         const data = this.IMU.getValueSync();
         if (data)
-            return Number (data.fusionPose.z * 180 / Math.PI).toFixed (2);
+            return Number (data.fusionPose.z > 0 ? data.fusionPose.z * 180 / Math.PI : 360 + data.fusionPose.z * 180 / Math.PI).toFixed (2);
     };
 
     _map_colour (col)
