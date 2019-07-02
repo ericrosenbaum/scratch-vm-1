@@ -765,12 +765,12 @@ class Scratch3PiSenseHatBlocks {
     _load_letter (lett)
     {
         const dict = " +-*/!\"#$><0123456789.=)(ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz?,;:|@%[&_']\\~"
-        let lgr = new Uint8Array (100);
+        let lgr = new Uint8Array (80);
         let inv = 90 - dict.indexOf (lett);
         if (inv > 90) inv = 90;
         const fd = fs.openSync ('/usr/lib/scratch3/sense_hat_text.bmp', 'r');
         for (count = 0; count < 5; count++)
-            fs.readSync (fd, lgr, (count + 1) * 16, 16, 3098 + inv * 80 + (64 - count * 16));
+            fs.readSync (fd, lgr, count * 16, 16, 3098 + inv * 80 + (64 - count * 16));
         fs.closeSync (fd);
         return lgr;
     }
@@ -782,8 +782,7 @@ class Scratch3PiSenseHatBlocks {
         for (count = 0; count < 64; count++)
         {
             const map = this._map_orient (count, orient);
-            if (map == 48) val = valb;
-            else if (lgr[map * 2] == 0xFF) val = valf;
+            if (map > 7 && map < 48 && lgr[(map - 8) * 2] == 0xFF) val = valf;
             else val = valb;
             pix[count * 2] = val / 256;
             pix[count * 2 + 1] = val % 256;
