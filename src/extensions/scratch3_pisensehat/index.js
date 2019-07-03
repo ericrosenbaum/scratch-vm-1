@@ -48,6 +48,7 @@ class Scratch3PiSenseHatBlocks {
 
         // movement timeout
         this._moved = 0;
+        this._movtim = 0;
 
         // tilt triggered
         this._xtilt = 0;
@@ -997,6 +998,7 @@ class Scratch3PiSenseHatBlocks {
     _unlock_move (obj)
     {
         obj._moved = 0;
+        obj._movtim = 0;
     }
 
     when_moved ()
@@ -1026,13 +1028,15 @@ class Scratch3PiSenseHatBlocks {
             }
             else return false;
         }
-        if (this._moved == 0)
+
+        const targ = 1.6;
+        if (x > targ || x < (-1 * targ) || y > targ || y < (-1 * targ) || z > targ || z < (-1 * targ))
         {
-            const targ = 1.6;
-            if (x > targ || x < (-1 * targ) || y > targ || y < (-1 * targ) || z > targ || z < (-1 * targ))
+            if (this._movtim != 0) clearTimeout (this._movtim);
+            this._movtim = setTimeout (this._unlock_move, 500, this);
+            if (this._moved == 0)
             {
                 this._moved = 1;
-                setTimeout (this._unlock_move, 500, this);
                 return true;
             }
         }
