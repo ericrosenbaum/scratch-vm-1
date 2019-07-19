@@ -93,9 +93,9 @@ class Scratch3PiSenseHatBlocks {
             blockIconURI: blockIconURI,
             blocks: [
                 {
-                    opcode: 'scroll_message_glob',
+                    opcode: 'scroll_message',
                     text: formatMessage({
-                        id: 'pisensehat.scroll_message_glob',
+                        id: 'pisensehat.scroll_message',
                         default: 'display text [MESSAGE]',
                         description: 'scroll message across in foreground colour'
                     }),
@@ -108,9 +108,9 @@ class Scratch3PiSenseHatBlocks {
                     }
                 },
                 {
-                    opcode: 'show_letter_glob',
+                    opcode: 'show_letter',
                     text: formatMessage({
-                        id: 'pisensehat.show_letter_glob',
+                        id: 'pisensehat.show_letter',
                         default: 'display character [LETTER]',
                         description: 'show letter in foreground colour'
                     }),
@@ -160,9 +160,9 @@ class Scratch3PiSenseHatBlocks {
                     }
                 },
                 {
-                    opcode: 'set_pixel_new',
+                    opcode: 'set_pixel',
                     text: formatMessage({
-                        id: 'pisensehat.set_pixel_new',
+                        id: 'pisensehat.set_pixel',
                         default: 'set pixel x [X] y [Y] to [COLOUR]',
                         description: 'set pixel from colour picker'
                     }),
@@ -311,165 +311,6 @@ class Scratch3PiSenseHatBlocks {
                         description: 'gets yaw'
                     }),
                     blockType: BlockType.REPORTER
-/*                },
-                '---',
-                {
-                    opcode: 'set_pixel',
-                    text: formatMessage({
-                        id: 'pisensehat.set_pixel',
-                        default: 'set pixel [X],[Y] to R [R] G [G] B [B]',
-                        description: 'set pixel to RGB colour'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        X: {
-                            type: ArgumentType.STRING,
-                            menu: 'coords',
-                            defaultValue: '0'
-                        },
-                        Y: {
-                            type: ArgumentType.STRING,
-                            menu: 'coords',
-                            defaultValue: '0'
-                        },
-                        R: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 255
-                        },
-                        G: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 255
-                        },
-                        B: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 255
-                        }
-                    }
-                },
-                {
-                    opcode: 'set_pixel_col',
-                    text: formatMessage({
-                        id: 'pisensehat.set_pixel_col',
-                        default: 'set pixel [X],[Y] to [COLOUR]',
-                        description: 'set pixel to named colour'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        X: {
-                            type: ArgumentType.STRING,
-                            menu: 'coords',
-                            defaultValue: '0'
-                        },
-                        Y: {
-                            type: ArgumentType.STRING,
-                            menu: 'coords',
-                            defaultValue: '0'
-                        },
-                        COLOUR: {
-                            type: ArgumentType.STRING,
-                            menu: 'colours',
-                            defaultValue: 'white'
-                        }
-                    }
-                },
-                {
-                    opcode: 'set_all_pixels',
-                    text: formatMessage({
-                        id: 'pisensehat.set_all_pixels',
-                        default: 'set all pixels to R [R] G [G] B [B]',
-                        description: 'set all pixels to RGB colour'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        R: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 255
-                        },
-                        G: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 255
-                        },
-                        B: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 255
-                        }
-                    }
-                },
-                {
-                    opcode: 'set_all_pixels_col',
-                    text: formatMessage({
-                        id: 'pisensehat.set_all_pixels_col',
-                        default: 'set all pixels to [COLOUR]',
-                        description: 'set all pixels to named colour'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        COLOUR: {
-                            type: ArgumentType.STRING,
-                            menu: 'colours',
-                            defaultValue: 'white'
-                        }
-                    }
-                },
-                {
-                    opcode: 'show_letter',
-                    text: formatMessage({
-                        id: 'pisensehat.show_letter',
-                        default: 'show letter [LETTER] at rotation [ROT] in [COLOUR] background [BCOLOUR]',
-                        description: 'show letter at rotation in colour'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        LETTER: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'A'
-                        },
-                        ROT: {
-                            type: ArgumentType.STRING,
-                            menu: 'rots',
-                            defaultValue: '0'
-                        },
-                        COLOUR: {
-                            type: ArgumentType.STRING,
-                            menu: 'colours',
-                            defaultValue: 'white'
-                        },
-                        BCOLOUR: {
-                            type: ArgumentType.STRING,
-                            menu: 'colours',
-                            defaultValue: 'off'
-                        }
-                    }
-                },
-                {
-                    opcode: 'scroll_message',
-                    text: formatMessage({
-                        id: 'pisensehat.scroll_message',
-                        default: 'scroll message [MESSAGE] at rotation [ROT] in [COLOUR] background [BCOLOUR]',
-                        description: 'scroll message across at rotation in colour'
-                    }),
-                    blockType: BlockType.COMMAND,
-                    arguments: {
-                        MESSAGE: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'Hello!'
-                        },
-                        ROT: {
-                            type: ArgumentType.STRING,
-                            menu: 'rots',
-                            defaultValue: '0'
-                        },
-                        COLOUR: {
-                            type: ArgumentType.STRING,
-                            menu: 'colours',
-                            defaultValue: 'white'
-                        },
-                        BCOLOUR: {
-                            type: ArgumentType.STRING,
-                            menu: 'colours',
-                            defaultValue: 'off'
-                        }
-                    }*/
                 }
             ],
             menus: {
@@ -578,30 +419,6 @@ class Scratch3PiSenseHatBlocks {
             return Number (data.fusionPose.z >= 0 ? data.fusionPose.z * 180 / Math.PI : 360 + data.fusionPose.z * 180 / Math.PI).toFixed (2);
     };
 
-    _map_colour (col)
-    {
-        if (col == 'off') return 0;
-        else if (col == 'white') return 0x1CE7;
-        else if (col == 'red') return 0x00E0;
-        else if (col == 'green') return 0x0007;
-        else if (col == 'blue') return 0x1C00;
-        else if (col == 'magenta') return 0x1CE0;
-        else if (col == 'yellow') return 0x00E7;
-        else if (col == 'cyan') return 0x1C07;
-        return 0;
-    }
-
-    _pixel (x, y, val)
-    {
-        let pix = new Uint8Array (2);
-        pix[0] = val / 256;
-        pix[1] = val % 256;
-        const pos = y * 8 + x;
-        const fd = fs.openSync (this.fbfile, "r+");
-        fs.writeSync (fd, pix, 0, 2, pos * 2);
-        fs.closeSync (fd);
-    }
-
     _pixel_remap (x, y, val)
     {
         let pix = new Uint8Array (2);
@@ -621,30 +438,6 @@ class Scratch3PiSenseHatBlocks {
     }
 
     set_pixel (args)
-    {
-        const x = Cast.toNumber (args.X);
-        const y = Cast.toNumber (args.Y);
-
-        const r = Cast.toNumber (args.R);
-        const g = Cast.toNumber (args.G);
-        const b = Cast.toNumber (args.B);
-        const val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
-
-        this._pixel (x, y, val);
-    }
-
-    set_pixel_col (args)
-    {
-        const x = Cast.toNumber (args.X);
-        const y = Cast.toNumber (args.Y);
-
-        const col = Cast.toString (args.COLOUR);
-        const val = this._map_colour (col);
-
-        this._pixel (x, y, val);
-    }
-
-    set_pixel_new (args)
     {
         const x = Cast.toNumber (args.X);
         const y = Cast.toNumber (args.Y);
@@ -673,39 +466,6 @@ class Scratch3PiSenseHatBlocks {
     all_off ()
     {
         this._all_pixels (0);
-    }
-
-    set_all_pixels (args)
-    {
-        const r = Cast.toNumber (args.R);
-        const g = Cast.toNumber (args.G);
-        const b = Cast.toNumber (args.B);
-        const val = (Math.trunc (b / 32) * 1024) + (Math.trunc (r / 32) * 32) + Math.trunc (g / 32);
-
-        this._all_pixels (val);
-    }
-
-    set_all_pixels_new (args)
-    {
-        const colour = Cast.toRgbColorList (args.COLOUR);
-        const val = (Math.trunc (colour[2] / 32) * 1024) + (Math.trunc (colour[0] / 32) * 32) + Math.trunc (colour[1] / 32);
-
-        this._all_pixels (val);
-    }
-
-    set_all_pixels_col (args)
-    {
-        const col = Cast.toString(args.COLOUR);
-        const val = this._map_colour (col);
-
-        this._all_pixels (val);
-    }
-
-    set_all_pixels_fg (args)
-    {
-        const val = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
-
-        this._all_pixels (val);
     }
 
     set_fg (args)
@@ -792,7 +552,7 @@ class Scratch3PiSenseHatBlocks {
         fs.closeSync (fd);
     };
 
-    show_letter_glob (args)
+    show_letter (args)
     {
         const lett = Cast.toString(args.LETTER);
         const valf = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
@@ -800,19 +560,6 @@ class Scratch3PiSenseHatBlocks {
 
         if (lett.length != 1) return;
         this._letter (lett, this._orient, valf, valb);
-    }
-
-    show_letter (args)
-    {
-        const lett = Cast.toString(args.LETTER);
-        const orient = Cast.toNumber(args.ROT);
-        const colour = Cast.toString(args.COLOUR);
-        const bg = Cast.toString(args.BCOLOUR);
-        const valf = this._map_colour (colour);
-        const valb = this._map_colour (bg);
-
-        if (lett.length != 1) return;
-        this._letter (lett, orient, valf, valb);
     }
 
     _message (message, orient, valf, valb)
@@ -964,25 +711,13 @@ class Scratch3PiSenseHatBlocks {
         }
     }
 
-    scroll_message_glob (args)
+    scroll_message (args)
     {
         const message = Cast.toString (args.MESSAGE);
         const valf = (Math.trunc (this._fg[2] / 32) * 1024) + (Math.trunc (this._fg[0] / 32) * 32) + Math.trunc (this._fg[1] / 32);
         const valb = (Math.trunc (this._bg[2] / 32) * 1024) + (Math.trunc (this._bg[0] / 32) * 32) + Math.trunc (this._bg[1] / 32);
 
         this._message (message, this._orient, valf, valb);
-    }
-
-    scroll_message (args)
-    {
-        const message = Cast.toString (args.MESSAGE);
-        const orient = Cast.toNumber (args.ROT);
-        const colour = Cast.toString (args.COLOUR);
-        const bg = Cast.toString (args.BCOLOUR);
-        const valf = this._map_colour (colour);
-        const valb = this._map_colour (bg);
-
-        this._message (message, orient, valf, valb);
     }
 
     when_joystick (args, util)
