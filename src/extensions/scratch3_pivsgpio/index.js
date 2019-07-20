@@ -1,4 +1,4 @@
-mconst formatMessage = require('format-message');
+const formatMessage = require('format-message');
 const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const Cast = require('../../util/cast');
