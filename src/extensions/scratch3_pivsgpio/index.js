@@ -145,7 +145,7 @@ class Scratch3PiVSGPIOBlocks {
         const pin = Cast.toString (args.GPIO);
         const val = Cast.toString (args.HILO);
 
-        let command = 'raspi-gpio set ' + pin + ' ip pd';
+        let command = 'raspi-gpio set ' + pin + ' ip pu';
         cp.execSync (command);
 
         command = 'raspi-gpio get ' + pin
@@ -169,7 +169,7 @@ class Scratch3PiVSGPIOBlocks {
         const pin = Cast.toString (args.GPIO);
         const val = Cast.toString (args.HILO);
 
-        let command = 'raspi-gpio set ' + pin + ' ip pd';
+        let command = 'raspi-gpio set ' + pin + ' ip pu';
         cp.execSync (command);
 
         command = 'raspi-gpio get ' + pin
