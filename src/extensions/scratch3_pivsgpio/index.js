@@ -1,4 +1,4 @@
-const formatMessage = require('format-message');
+mconst formatMessage = require('format-message');
 const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const Cast = require('../../util/cast');
@@ -130,7 +130,10 @@ class Scratch3PiVSGPIOBlocks {
                 },
             ],
             menus: {
-                gpios: ['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27'],
+                gpios: {
+                    acceptReporters: true,
+                    items: ['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27']
+                },
                 pressed: ['pressed', 'released'],
                 onoff: ['on', 'off'],
             }
@@ -151,12 +154,12 @@ class Scratch3PiVSGPIOBlocks {
 
         if (elements[2].includes ('1'))
         {
-            if (val == 'pressed') return true;
+            if (val == 'released') return true;
             else return false;
         }
         else
         {
-            if (val == 'released') return true;
+            if (val == 'pressed') return true;
             else return false;
         }
     }
@@ -175,12 +178,12 @@ class Scratch3PiVSGPIOBlocks {
 
         if (elements[2].includes ('1'))
         {
-            if (val == 'pressed') return true;
+            if (val == 'released') return true;
             else return false;
         }
         else
         {
-            if (val == 'released') return true;
+            if (val == 'pressed') return true;
             else return false;
         }
     }
