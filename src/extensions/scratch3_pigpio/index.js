@@ -116,7 +116,7 @@ class Scratch3PiGPIOBlocks {
                     opcode: 'set_pull',
                     text: formatMessage({
                         id: 'pigpio.set_pull',
-                        default: 'set gpio [GPIO] to input pulled [PULL]',
+                        default: 'set gpio [GPIO] to input pulled [HILO]',
                         description: 'set the gpio as input pulled up or down'
                     }),
                     blockType: BlockType.COMMAND,
@@ -126,10 +126,10 @@ class Scratch3PiGPIOBlocks {
                             menu: 'gpios',
                             defaultValue: '0'
                         },
-                        PULL: {
+                        HILO: {
                             type: ArgumentType.STRING,
-                            menu: 'pull',
-                            defaultValue: 'up'
+                            menu: 'hilo',
+                            defaultValue: 'high'
                         }
                     }
                 },
@@ -139,7 +139,6 @@ class Scratch3PiGPIOBlocks {
                     acceptReporters: true,
                     items: ['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27']
                 },
-                pull: ['up', 'down'],
                 hilo: ['high', 'low'],
             }
         };
@@ -202,10 +201,10 @@ class Scratch3PiGPIOBlocks {
     set_pull (args)
     {
         const pin = Cast.toString (args.GPIO);
-        const val = Cast.toString (args.PULL);
+        const val = Cast.toString (args.HILO);
 
         let op = 'pu';
-        if (val == 'down') op = 'pd';
+        if (val == 'low') op = 'pd';
 
         const command = 'raspi-gpio set ' + pin + ' ip ' + op;
         cp.execSync (command);
