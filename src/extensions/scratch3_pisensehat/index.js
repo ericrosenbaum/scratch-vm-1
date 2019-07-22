@@ -317,7 +317,7 @@ class Scratch3PiSenseHatBlocks {
                 coords: {
                     acceptReporters: true,
                     items: ['0','1','2','3','4','5','6','7']
-                }
+                },
                 rots: ['0', '90', '180', '270'],
                 stick: [{text:'up', value:'up arrow'}, {text:'down', value:'down arrow'}, {text:'left', value:'left arrow'}, {text:'right', value:'right arrow'}, {text:'centre', value:'enter'}],
                 tilt: ['forward', 'backward', 'left', 'right']
